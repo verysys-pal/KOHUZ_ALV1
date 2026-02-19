@@ -1,0 +1,35 @@
+record(motor, "$(P)$(M)") {
+    field(DTYP, "asynMotor")
+    field(OUT,  "@asyn($(PORT),$(ADDR))")
+    
+    # 기본 분해능 및 변환 설정
+    field(MRES, "$(MRES=0.001)")  # Motor Step Resolution
+    field(SREV, "$(SREV=1000)")
+    field(UREV, "$(UREV=1)")
+    
+    # 속도 및 가속도 제어
+    field(VELO, "$(VELO=1)")
+    field(ACCL, "$(ACCL=0.2)")
+    field(VBAS, "$(VBAS=0.1)")
+    
+    # 이동 완료 판정 기준 (Retry Deadband)
+    field(RDBD, "$(RDBD=0.003)")
+    
+    # 엔코더 설정 및 정밀도
+    field(UEIP, "$(UEIP=No)")      # Use Encoder If Present (필요시 Yes로 변경)
+    # ERES가 RDBD보다 너무 작으면 노이즈에 취약해집니다. 0.001 정도로 맞추는 것을 권장합니다.
+    field(ERES, "$(ERES=0.001)") 
+    
+    # 표시 정밀도 및 지연 시간
+    # 0.001 단위까지 보여주도록 설정 (Precision 3)
+    field(PREC, "$(PREC=3)")
+    field(EGU,  "$(EGU=mm)")
+    # DLY를 약간 주어 하드웨어가 완전히 멈춘 후 DMOV가 1이 되도록 안정화 시간을 확보합니다.
+    field(DLY,  "$(DLY=0.05)")
+
+    # 리미트 설정 (시스템 사양에 맞게 조정 필요)
+    field(HLM,  "$(HLM=100)")
+    field(LLM,  "$(LLM=0)")
+    field(DHLM, "$(DHLM=100)")
+    field(DLLM, "$(DLLM=0)")
+}

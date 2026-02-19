@@ -1,0 +1,17 @@
+# Application: KOHUZ_ALV1
+# Hardware: Kohzu XA07A-L202 + TITAN-A2
+
+file "../../db/KOHZU_Motor.db"
+{
+pattern
+{P,      M,   PORT, ADDR, DESC,           EGU, DIR,  VELO, VBAS, ACCL, MRES,   SREV, UREV, PREC, HLM,  LLM,   DHLM,  DLLM,  UEIP, RDBD, DLY}
+{KOHZU:, m1,  PC0,  0,    "XA07A-L202",   mm,  Pos,  5.0,  0.1,  0.5,  0.0005, 2000, 1.0,  3,    34.0, -34.0, 35.0,  -35.0, No,   0.003, 0.1}
+}
+
+# 원점 복귀 방법 선택 PV (Method 4: NORG, Method 7: CW Limit, Method 8: CCW Limit)
+file "../../db/KOHZU_HomingMethod.db"
+{
+pattern
+{P,      M,   PORT, ADDR}
+{KOHZU:, m1,  PC0,  0}
+}
