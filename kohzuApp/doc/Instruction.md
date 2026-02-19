@@ -321,3 +321,96 @@
 
 ### 🔍 검증 결과 (Validation)
 - [x] 문서 생성 확인 (`ls -l /usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1/kohzuApp/doc/motorx_all_User_Guide.md`) 
+
+
+
+
+
+
+
+
+
+
+
+
+---
+## 📋 8. 작업지시 (User Instruction)
+1. /usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1 폴더를 git에 올리고 싶어
+
+---
+
+### ✅ 8.1 Todo List (AI Analysis)
+*AI가 작업 지시를 해석하여 생성하는 세부 실행 계획입니다.*
+
+- [x] **Step 1: Check Git Status** - `.git` 디렉토리 존재 여부 확인
+- [x] **Step 2: Initialize Repository** - `git init` 실행
+- [x] **Step 3: Configure .gitignore** - EPICS 빌드 부산물(bin, lib, O.* 등) 제외 설정 확인
+- [x] **Step 4: Commit Files** - 전체 파일 스테이징 및 초기 커밋 (`Initial commit`)
+- [x] **Step 5: Documentation** - 작업 결과 기록
+
+---
+
+### 📝 8.2 Result (Git Initialized)
+*Git 리포지토리가 성공적으로 초기화되었습니다.*
+
+- **리포지토리 경로:** `/usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1/.git`
+- **초기 커밋 메시지:** "Initial commit for KOHUZ_ALV1 EPICS IOC"
+- **포함된 파일 수:** 약 46개 파일 (소스, 문서, 설정 파일 등)
+- **제외된 항목(.gitignore):** `/bin`, `/lib`, `/dbd`, `O.*` 등 빌드 결과물
+
+### 🛠 8.3 변경 사항 (Summary of Changes)
+- **수정 위치:** `/usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1` (로컬 디렉토리)
+- **주요 내용:** 
+  - `git init` 수행
+  - `.gitignore` 확인 및 적용
+  - 전체 파일 `git add .` 및 `git commit` 완료
+
+### 🔍 검증 결과 (Validation)
+- [x] `.git` 폴더 생성 확인
+- [x] `git status` 명령어로 워킹 트리가 깨끗한지(Clean) 확인
+
+---
+
+## 📋 9. 작업지시 (User Instruction)
+1. git push 진행
+
+---
+
+### ✅ 9.1 Todo List (AI Analysis)
+*AI가 작업 지시를 해석하여 생성하는 세부 실행 계획입니다.*
+
+- [x] **Step 1: Check Remote** - 현재 원격 저장소(Remote) 설정 확인 (`git remote -v`) -> **결과: 설정 없음**
+- [x] **Step 2: Add Remote (User Action)** - 사용자로부터 원격 저장소 URL(`https://github.com/verysys-pal/KOHUZ_ALV1`)을 받아 등록 완료
+- [ ] **Step 3: Push** - `git push -u origin master` 실행 -> **실패(인증 필요)**
+
+### 📝 9.2 Result (Authentication Required)
+*Github 리포지토리(`https://github.com/verysys-pal/KOHUZ_ALV1`)에 Push를 시도했으나 인증(Username/Password)을 요구하여 진행이 중단되었습니다.*
+
+**사유:**
+터미널 환경에서 `https` 프로토콜을 이용한 Push 시에는 Github 사용자 인증 정보(Username + PAT) 입력이 필요하나, 현재 자동화된 환경에서는 이를 직접 처리하기 어렵습니다.
+
+**사용자 조치 필요:**
+터미널에서 직접 아래 명령어를 입력하여 Push를 완료해주세요.
+
+```bash
+cd /usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1
+git push -u origin master
+```
+*(Username과 Password(또는 Personal Access Token)를 입력해야 합니다)*
+
+### 🛠 9.3 변경 사항 (Summary of Changes)
+- **수정 위치:** 로컬 Git 설정 (`.git/config`)
+- **주요 내용:** 
+  - Remote Origin 추가: `https://github.com/verysys-pal/KOHUZ_ALV1`
+
+### 🔍 검증 결과 (Validation)
+- [x] 원격 저장소 URL 등록 확인 (`git remote -v`)
+- [ ] Push 성공 여부 확인 (사용자 수동 진행 필요)
+
+
+
+
+
+
+
+
