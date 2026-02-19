@@ -2861,10 +2861,10 @@ $(pv_value)</tooltip>
   <widget type="choice" version="2.0.0">
     <name>Choice Button</name>
     <pv_name>$(P)$(M)_able.VAL</pv_name>
-    <x>299</x>
-    <y>171</y>
-    <width>80</width>
-    <height>40</height>
+    <x>296</x>
+    <y>163</y>
+    <width>78</width>
+    <height>58</height>
     <foreground_color>
       <color name="Gray_14" red="0" green="0" blue="0">
       </color>
@@ -3122,8 +3122,8 @@ $(pv_value)</tooltip>
   <widget type="choice" version="2.0.0">
     <name>Choice Button</name>
     <pv_name>$(P)$(M).SPMG</pv_name>
-    <x>384</x>
-    <y>132</y>
+    <x>380</x>
+    <y>141</y>
     <width>60</width>
     <height>80</height>
     <foreground_color>

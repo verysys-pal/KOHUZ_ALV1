@@ -411,6 +411,11 @@ git push -u origin master
 
 
 
-
+## 📋 10. 작업지시 (User Instruction)
+1. motorx_all.opi 소스 코드를 분석하여 다음의 아키텍처 및 UI/UX 개선 사항을 적용한 수정된 XML 코드를 생성하라.
+2. 시각적 계층화 및 섹션화 (Visual Hierarchization)
+    - Grouping Container 적용: 현재 Rectangle로만 구분된 섹션을 물리적인 groupingContainer 위젯으로 교체하라. 
+    - 섹션 분리: 'Drive/Calibration', 'Dynamics(Velocity/Accel)', 'Servo/PID', 'Setup/Resolution' 네 가지 주요 섹션으로 논리적 그룹을 묶고, 각 그룹 상단에 명확한 제목 라벨을 배치하라. 
+    - Grid Alignment: 모든 위젯을 5x5 그리드에 맞춰 정렬하고, 현재 불규칙한 X, Y 좌표값을 표준화하여 배치 미세 오차를 제거하라
 
 
