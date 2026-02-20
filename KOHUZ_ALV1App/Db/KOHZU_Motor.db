@@ -1,6 +1,7 @@
 record(motor, "$(P)$(M)") {
     field(DTYP, "asynMotor")
     field(OUT,  "@asyn($(PORT),$(ADDR))")
+    field(DESC, "$(DESC)")
     
     # 기본 분해능 및 변환 설정
     field(MRES, "$(MRES=0.001)")  # Motor Step Resolution

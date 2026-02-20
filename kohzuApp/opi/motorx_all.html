@@ -32,6 +32,7 @@
             width: 100%;
             min-width: 350px;
             max-width: 400px;
+            margin: 0 auto;
         }
 
         .card-header {
@@ -157,36 +158,52 @@
 
     <!-- Header -->
     <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
-        <div class="px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="bg-blue-600 p-2 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+        <div class="px-4 py-3 flex flex-row justify-between items-center gap-2 md:gap-4">
+            <!-- Left Group: Title & PV Info -->
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4">
+                <!-- Row 1: Logo + Title + Version -->
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 p-1.5 md:p-2 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-sm md:text-xl font-bold text-white tracking-tight">
+                        Kohzu Motor Control
+                        <span class="hidden md:inline text-xs text-slate-500 font-normal ml-2">(v1.10 UI
+                            Fixes)</span>
+                    </h1>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold text-white tracking-tight">Kohzu Motor Control <span
-                            class="text-xs text-slate-500 font-normal ml-2">(v1.2 Patched)</span></h1>
-                    <div class="flex items-center gap-2 text-sm text-slate-400">
-                        <span>PV:</span>
+
+                <!-- Row 2: PV Info -->
+                <div class="flex items-center gap-2 text-xs md:text-sm text-slate-400 pl-1 md:pl-0">
+                    <div class="flex items-center gap-1">
+                        <span class="hidden md:inline">PV:</span>
                         <span id="prefix-display" class="pv-font text-blue-400 font-semibold">LOADING...</span>
+                    </div>
+                    <div class="hidden md:block w-px h-4 bg-slate-600"></div>
+                    <div class="flex items-center gap-1">
+                        <span data-pv="$(P)$(M).DESC" class="pv-font text-slate-300">LOADING...</span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
+            <!-- Right Group: Status & Abort -->
+            <div class="flex flex-row items-center gap-2 md:gap-4">
                 <div id="conn-status"
-                    class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-700 text-slate-300 text-xs font-semibold">
-                    <div class="w-2 h-2 rounded-full bg-slate-500"></div>
-                    Disconnected
+                    class="flex items-center gap-1.5 px-2 py-1 md:px-3 rounded-full bg-slate-700 text-slate-300 text-[10px] md:text-xs font-semibold whitespace-nowrap">
+                    <div class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-slate-500"></div>
+                    <span class="hidden sm:inline">Disconnected</span>
+                    <span class="sm:hidden">Disc</span>
                 </div>
                 <button onclick="app.write('$(P)allstop.VAL', 1)"
-                    class="btn btn-danger flex items-center gap-2 shadow-lg shadow-red-900/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    class="btn btn-danger flex items-center gap-1.5 shadow-lg shadow-red-900/20 text-xs md:text-sm py-1.5 px-2 md:px-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20"
+                        fill="currentColor">
                         <path fill-rule="evenodd"
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
                             clip-rule="evenodd" />
@@ -198,10 +215,11 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6 grid grid-cols-1 xl:grid-cols-4 gap-6">
+    <main
+        class="flex-1 p-6 grid grid-cols-1 md:grid-cols-[repeat(2,minmax(350px,400px))] xl:grid-cols-[repeat(3,minmax(350px,400px))] justify-center gap-[12px]">
 
         <!-- Column 1: Primary Control -->
-        <div class="xl:col-span-2 space-y-6">
+        <div class="xl:col-span-1 space-y-6">
 
             <!-- Drive Card -->
             <div class="card card-responsive relative overflow-hidden">
@@ -253,7 +271,7 @@
                             </div>
                         </div>
                         <div class="col-span-4 flex flex-col justify-end">
-                            <button data-pv="$(P)$(M).STOP" onclick="app.write('$(P)$(M).STOP', 1)"
+                            <button onclick="app.write('$(P)$(M).STOP', 1)"
                                 class="h-[52px] w-full bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg border-2 border-red-500 shadow-lg shadow-red-900/30 flex items-center justify-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
@@ -406,95 +424,108 @@
         </div>
 
         <!-- Column 2: Parameters -->
-        <div class="xl:col-span-1 space-y-6">
+        <div class="xl:col-span-1 space-y-6 flex flex-col items-center">
+            <!-- Dynamics -->
             <!-- Dynamics -->
             <div class="card card-responsive">
                 <div class="card-header">
-                    <span class="card-title text-sm">Dynamics</span>
+                    <span class="card-title text-sm">Dynamics & Backlash</span>
                 </div>
-                <div class="card-body space-y-4">
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-xs text-slate-400">Velocity (VELO)</label>
-                            <span class="text-xs text-slate-500 pv-font" data-pv="$(P)$(M).EGU">mm/s</span>
+                <div class="card-body grid grid-cols-2 gap-4">
+                    <!-- Left: Dynamics -->
+                    <div class="space-y-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">Dynamics</div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Velocity (VELO)</label>
+                                <span class="text-xs text-slate-500 pv-font" data-pv="$(P)$(M).EGU">mm/s</span>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).VELO"
+                                class="w-full input-dark text-right font-bold text-blue-400">
                         </div>
-                        <input type="number" data-pv="$(P)$(M).VELO"
-                            class="w-full input-dark text-right font-bold text-blue-400">
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-xs text-slate-400">Max Velocity (VMAX)</label>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Max Velocity (VMAX)</label>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).VMAX"
+                                class="w-full input-dark text-right text-slate-400">
                         </div>
-                        <input type="number" data-pv="$(P)$(M).VMAX"
-                            class="w-full input-dark text-right text-slate-400">
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-xs text-slate-400">Acceleration (ACCL)</label>
-                            <span class="text-xs text-slate-500 pv-font">sec</span>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Acceleration (ACCL)</label>
+                                <span class="text-xs text-slate-500 pv-font">sec</span>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).ACCL" class="w-full input-dark text-right">
                         </div>
-                        <input type="number" data-pv="$(P)$(M).ACCL" class="w-full input-dark text-right">
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-xs text-slate-400">Move Fraction (FRAC)</label>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Move Fraction (FRAC)</label>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).FRAC" class="w-full input-dark text-right">
                         </div>
-                        <input type="number" data-pv="$(P)$(M).FRAC" class="w-full input-dark text-right">
                     </div>
-                </div>
 
-                <!-- Backlash Section -->
-                <div class="pt-4 border-t border-slate-700">
-                    <label class="text-xs font-bold text-slate-500 block mb-2">BACKLASH</label>
-                    <div class="grid grid-cols-3 gap-2">
+                    <!-- Right: Backlash -->
+                    <div class="space-y-4 border-l border-slate-700 pl-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">Backlash</div>
                         <div>
-                            <label class="text-[10px] text-slate-400 block">Dist (BDST)</label>
-                            <input type="number" data-pv="$(P)$(M).BDST" class="w-full input-dark text-right text-xs">
+                            <label class="text-xs text-slate-400 block mb-1">Dist (BDST)</label>
+                            <input type="number" data-pv="$(P)$(M).BDST" class="w-full input-dark text-right">
                         </div>
                         <div>
-                            <label class="text-[10px] text-slate-400 block">Vel (BVEL)</label>
-                            <input type="number" data-pv="$(P)$(M).BVEL" class="w-full input-dark text-right text-xs">
+                            <label class="text-xs text-slate-400 block mb-1">Vel (BVEL)</label>
+                            <input type="number" data-pv="$(P)$(M).BVEL" class="w-full input-dark text-right">
                         </div>
                         <div>
-                            <label class="text-[10px] text-slate-400 block">Accel (BACC)</label>
-                            <input type="number" data-pv="$(P)$(M).BACC" class="w-full input-dark text-right text-xs">
+                            <label class="text-xs text-slate-400 block mb-1">Accel (BACC)</label>
+                            <input type="number" data-pv="$(P)$(M).BACC" class="w-full input-dark text-right">
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Soft Limits -->
+            <!-- Soft Limits -->
             <div class="card card-responsive">
                 <div class="card-header">
                     <span class="card-title text-sm">Soft Limits</span>
                 </div>
-                <div class="card-body space-y-4">
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">User High Limit (HLM)</label>
-                        <input type="number" data-pv="$(P)$(M).HLM"
-                            class="w-full input-dark text-right border-red-900/50 focus:border-red-500">
+                <div class="card-body grid grid-cols-2 gap-4">
+                    <!-- Left: User Limits -->
+                    <div class="space-y-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">User Limits</div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">High (HLM)</label>
+                            <input type="number" data-pv="$(P)$(M).HLM"
+                                class="w-full input-dark text-right border-red-900/50 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Low (LLM)</label>
+                            <input type="number" data-pv="$(P)$(M).LLM"
+                                class="w-full input-dark text-right border-blue-900/50 focus:border-blue-500">
+                        </div>
                     </div>
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">User Low Limit (LLM)</label>
-                        <input type="number" data-pv="$(P)$(M).LLM"
-                            class="w-full input-dark text-right border-blue-900/50 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">Dial High Limit (DHLM)</label>
-                        <input type="number" data-pv="$(P)$(M).DHLM"
-                            class="w-full input-dark text-right text-slate-500">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">Dial Low Limit (DLLM)</label>
-                        <input type="number" data-pv="$(P)$(M).DLLM"
-                            class="w-full input-dark text-right text-slate-500">
+
+                    <!-- Right: Dial Limits -->
+                    <div class="space-y-4 border-l border-slate-700 pl-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">Dial Limits</div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">High (DHLM)</label>
+                            <input type="number" data-pv="$(P)$(M).DHLM"
+                                class="w-full input-dark text-right text-slate-500">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Low (DLLM)</label>
+                            <input type="number" data-pv="$(P)$(M).DLLM"
+                                class="w-full input-dark text-right text-slate-500">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Column 3: Advanced/Setup -->
-        <div class="xl:col-span-1 space-y-6">
+        <div class="xl:col-span-1 space-y-6 flex flex-col items-center">
             <!-- Calibration & Homing -->
             <div class="card card-responsive">
                 <div class="card-header">
@@ -503,12 +534,13 @@
                 <div class="card-body grid grid-cols-2 gap-3">
                     <div class="col-span-2 space-y-2 mb-2">
                         <label class="text-xs text-slate-400">Set Position (SET)</label>
-                        <div class="flex gap-2 bg-slate-800 p-1 rounded">
+                        <div class="flex gap-2 bg-slate-800 p-1 rounded border border-slate-600">
                             <button onclick="app.write('$(P)$(M).SET', 0)" id="btn-set-use"
-                                class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 hover:text-white">Use</button>
+                                class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 border border-transparent hover:border-slate-500 hover:text-white">Use</button>
                             <button onclick="app.write('$(P)$(M).SET', 1)" id="btn-set-set"
-                                class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 hover:text-white">Set</button>
+                                class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 border border-transparent hover:border-slate-500 hover:text-white">Set</button>
                         </div>
+                        <span data-pv="$(P)$(M).SET" class="hidden"></span>
                     </div>
 
                     <button onclick="app.write('$(P)$(M).HOMF', 1)" class="btn btn-secondary text-xs">Home Fwd</button>
@@ -538,11 +570,12 @@
             </div>
 
             <!-- Resolution -->
+            <!-- Resolution -->
             <div class="card card-responsive">
                 <div class="card-header">
                     <span class="card-title text-sm">Resolution</span>
                 </div>
-                <div class="card-body space-y-3">
+                <div class="card-body grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-xs text-slate-400 block mb-1">Motor Res (MRES)</label>
                         <input type="number" data-pv="$(P)$(M).MRES" class="w-full input-dark text-right text-xs">
@@ -571,7 +604,7 @@
                             <option value="1">Yes</option>
                         </select>
                     </div>
-                    <div>
+                    <div class="col-span-2">
                         <label class="text-xs text-slate-400 block mb-1">Readback Dly (DLY)</label>
                         <input type="number" data-pv="$(P)$(M).DLY" class="w-full input-dark text-right text-xs">
                     </div>
@@ -731,12 +764,16 @@
                 if (data.pv.endsWith('.SET')) {
                     const btnUse = document.getElementById('btn-set-use');
                     const btnSet = document.getElementById('btn-set-set');
-                    if (data.value == 0) {
-                        btnUse.classList.add('bg-blue-600', 'text-white');
-                        btnSet.classList.remove('bg-blue-600', 'text-white');
+                    // Handle both numeric (0/1) and enum string ("Use"/"Set") values
+                    const val = data.value;
+                    const isUse = (val == 0 || val === 'Use');
+
+                    if (isUse) {
+                        btnUse.classList.add('bg-green-600', 'text-white');
+                        btnSet.classList.remove('bg-green-600', 'text-white');
                     } else {
-                        btnUse.classList.remove('bg-blue-600', 'text-white');
-                        btnSet.classList.add('bg-blue-600', 'text-white');
+                        btnUse.classList.remove('bg-green-600', 'text-white');
+                        btnSet.classList.add('bg-green-600', 'text-white');
                     }
                 }
 
@@ -775,7 +812,12 @@
         }
 
         const app = new EPICSController();
+
+        // [Tailwind JIT Hack] Force include classes that are added dynamically via JS
+        // These are needed because the JIT compiler might miss them if they only appear in JS strings
+        // <div class="hidden bg-green-600 text-white border-green-600"></div>
     </script>
+    <div class="hidden bg-green-600 text-white border-green-600"></div>
 </body>
 
 </html>
