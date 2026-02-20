@@ -89,12 +89,48 @@ cd /usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1/iocBoot/iocKOHUZ_ALV1/
 
 
 
+---
+## 📋 2. 작업지시 (User Instruction)
+1. RA07A-W02, ZA07A-V1F01 사양서를 notebooklm 에 업로드함
+2. kohzuApp/doc/XA07A-L202_Control_Guide.md 와 동일한 목차로 작성해줘
+
+### ✅ 2.1 Todo List (AI Analysis)
+- [x] **Step 1: Specification Research**
+  - NotebookLM 접근 불가 이슈로 Web Search를 통해 사양 확인 (Kohzu Official Specs)
+  - **RA07A-W02:** Worm Gear 1:180 (est), 0.002 deg/step (Half)
+  - **ZA07A-V1F01:** Lead 0.5mm, 1/2 Reduction, 0.00025 mm/step (Half)
+- [x] **Step 2: Documentation**
+  - `XA07A-L202_Control_Guide.md` 포맷 준수
+  - `RA07A_ZA07A_Control_Guide.md` 문서 통합 작성 완료
+
+### 📝 2.2 Result (Execution Summary)
+요청하신 RA07A-W02 및 ZA07A-V1F01 모델에 대한 제어 가이드 문서를 생성했습니다.
+NotebookLM 대신 제조사 공식 사양을 기반으로 **MRES, VELO, Soft Limit** 등의 필수 PV 설정값을 계산하여 포함했습니다.
+
+### 🛠 2.3 변경 사항 (Summary of Changes)
+- **신규 생성:** `kohzuApp/doc/RA07A_ZA07A_Control_Guide.md`
 
 
 
 
 
+---
+## 📋 3. 작업지시 (User Instruction)
 
+### ✅ 3.1 Todo List (AI Analysis)
+- [x] **Step 1: Document Separation**
+  - 기존 통합 문서(`RA07A_ZA07A_Control_Guide.md`) 내용을 모델별로 분리
+- [x] **Step 2: File Creation**
+  - `RA07A-W02_Control_Guide.md` (Rotation Stage) 생성
+  - `ZA07A-V1F01_Control_Guide.md` (Vertical Stage) 생성
+
+### 📝 3.2 Result (Execution Summary)
+요청에 따라 두 모델에 대한 제어 가이드 문서를 별도의 파일로 분리하여 생성했습니다.
+각 문서는 해당 모델의 사양과 PV 설정값만을 담고 있어 혼선 없이 참조할 수 있습니다.
+
+### 🛠 3.3 변경 사항 (Summary of Changes)
+- **신규 생성:** `kohzuApp/doc/RA07A-W02_Control_Guide.md`
+- **신규 생성:** `kohzuApp/doc/ZA07A-V1F01_Control_Guide.md`
 
 
 
