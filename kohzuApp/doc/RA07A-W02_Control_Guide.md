@@ -10,13 +10,36 @@ EPICS Motor Record의 주요 PV 기능 정의와 상세 계산 로직을 포함�
 RA07A-W02 스테이지의 기구학적 사양을 기반으로 EPICS Motor 레코드의 필수 필드 값을 계산합니다.
 
 ### 사양 (Specifications)
-- **Model:** RA07A-W02
-- **Type:** Motorized Rotation Stage
-- **Motor:** Oriental Motor 5-phase Stepper (PK544PMB or equivalent)
-- **Mechanism:** Worm Gear (Ratio 1:180 Estimation based on 0.004° resolution)
+- **Model Number:** RA07A-W02
+- **Mirror Model Number:** RA07A-W02-R
 - **Table Size:** Φ68mm
-- **Angular Range:** ±135° (Hardware Limit)
-- **Max Speed:** 20°/sec
+- **Guide Mechanism:** Angular Bearing
+- **Angular Range:** ±135°
+- **Lead Mechanism:** Worm & Worm Wheel 1/90
+- **Resolution (Full/Half Step):** 0.004° / 0.002°
+- **Resolution (Micro Step 1/20 div):** 0.0002°
+- **Maximum Speed:** 20°/sec
+- **Key Performance Metrics:**
+    - Accumulated Lead Error: ≦0.015°/360° (Ave. 0.0045°/360°)
+    - Lost Motion: ≦0.006° (Ave. 0.0026°)
+    - Angular Repeatability: ≦0.002° (Ave. 0.0004°)
+    - Pitch Error: ≦0.01°/4° (Ave. 0.0027°/4°)
+    - Backlash: ≦0.001° (Ave. 0.0001°)
+    - Moment Load Stiffness: 0.51 arcsec/N cm (Ave. 0.32 arcsec/N cm)
+    - Load Capacity: 58.8N (6kgf)
+    - Surface Runout: ≦15μm/360° (Ave. 5.53μm/360°)
+    - Eccentricity: ≦5μm/360° (Ave. 2.74μm/360°)
+- **Material:** Aluminum Alloy
+- **Finishing:** Clear Matt Anodizing
+- **Weight:** 1.2kg
+- **Electromechanical Specs:**
+    - Sensor Model: F-101 (HOME, LIMIT)
+    - Motor Shaft Diameter: Φ5mm (Conformance option handle: A type)
+    - 5 Phase Stepper Motor: Oriental motor: PK544PMB
+    - Connector: Hirose: RP13A-12JG-20PC
+    - 2 Phase Stepper Option (RA07A-W02-BM):
+        - Motor: Oriental motor: PKP244D15B
+        - Connector: Hirose: RP13A-12JG-20PC
 
 ### MRES 설정 상세 가이드 (Resolution Calculation)
 EPICS Motor Record의 `.MRES` (Motor Resolution) 필드는 모터가 1 스텝 회전할 때 스테이지가 실제로 이동하는 각도(EGU, degree)를 정의합니다.
@@ -24,32 +47,31 @@ EPICS Motor Record의 `.MRES` (Motor Resolution) 필드는 모터가 1 스텝 �
 **공식:**
 $$MRES = \frac{UREV}{SREV}$$
 
-*   **UREV (Units per Revolution):** 모터 1회전 당 스테이지 회전 각도
-    *   Gear Ratio: 1:180 (추정) $\rightarrow$ 모터 180회전 = 스테이지 1회전(360°)
-    *   $UREV = 360 / 180 = \mathbf{2.0}^\circ$
-*   **SREV (Steps per Revolution):** 모터 1회전 당 필요 펄스 수 (드라이버 설정에 의존)
-    *   5-phase Standard Motor (0.72°/step): 500 steps/rev
+*   **Lead Mechanism (Worm Ratio):** 1/90
+    *   One Stage Revolution (360°) requires 90 Motor Revolutions.
+    *   Output per 1 Motor Rev = $360 / 90 = 4.0^\circ$
+*   **Motor Step Angle:** 0.36° (1000 steps/rev - Inferred from 0.004° Full Step Spec)
+    *   Unlike standard 0.72° (500 steps/rev) motors, the spec resolution (0.004°) with a 1/90 gear requires a 0.36° motor (or 0.72° with 1/2 microstep base).
+    *   Calculation: $4.0^\circ / 1000 = 0.004^\circ$ (Matches Full Step Spec)
 
-**RA07A-W02 적용 예시:**
+*   **UREV (Units per Revolution):** 모터 1회전 당 스테이지 회전 각도 ($360 / 90 = 4.0^\circ$)
+*   **SREV (Steps per Revolution):** 2000 (Half Step assuming 1000 steps/rev base).
 
-1.  **Full Step (기본):**
-    *   Standard Motor 0.72° $\rightarrow$ 500 Steps/Rev
-    *   $MRES = 2.0 / 500 = \mathbf{0.004}^\circ$ (Spec 일치)
-2.  **Half Step (추천 - 일반적):**
-    *   Driver Setting: 2-div (Half step)
-    *   Steps/Rev: $500 \times 2 = 1000$ Steps/Rev
-    *   $MRES = 2.0 / 1000 = \mathbf{0.002}^\circ$
-3.  **Micro Step (1/20):**
-    *   Driver Setting: 20-div
-    *   Steps/Rev: $500 \times 20 = 10000$ Steps/Rev
-    *   $MRES = 2.0 / 10000 = \mathbf{0.0002}^\circ$
+**RA07A-W02 적용 예시 (Spec 기준):**
+
+1.  **Full Step (0.004°):**
+    *   $MRES = \mathbf{0.004}^\circ$
+2.  **Half Step (0.002°) - Recommended:**
+    *   $MRES = \mathbf{0.002}^\circ$
+3.  **Micro Step 1/20 (0.0002°):**
+    *   $MRES = \mathbf{0.0002}^\circ$
 
 ### 추천 PV 설정값 (Half Step 기준)
 
 | PV Field | Description | Value |
 | :--- | :--- | :---: |
-| **(P)(M).UREV** | Units per Revolution | **2.0** |
-| **(P)(M).SREV** | Steps per Revolution | **1000** |
+| **(P)(M).UREV** | Units per Revolution | **4.0** |
+| **(P)(M).SREV** | Steps per Revolution | **2000** |
 | **(P)(M).MRES** | Motor Resolution | **0.002** |
 | **(P)(M).EGU** | Engineering Units | **deg** |
 
@@ -75,7 +97,7 @@ $$MRES = \frac{UREV}{SREV}$$
 ## 3. 운용 가이드 (OPI Operation)
 
 ### 적용된 주요 파라미터 상세
-- **MRES (0.002)**: RA07A-W02의 웜기어비(1:180 추정)와 Half-step(1000 steps/rev) 설정을 기준으로 계산된 분해능입니다.
+- **MRES (0.002)**: 사양서 기준 Half-step 분해능입니다.
 - **VELO/VMAX (5.0 / 20.0)**: 최대 속도 사양(20 deg/s)을 고려하여 안전하게 5.0 deg/s로 설정했습니다.
 - **HLM/LLM (130.0 / -130.0)**: 하드웨어 리미트(±135°)보다 5° 안쪽에 여유를 둔 소프트웨어 리미트 값입니다.
 - **PREC (3)**: 0.002 단위의 정밀도를 표현하기 위해 소수점 3자리까지 표시하도록 설정했습니다.

@@ -10,11 +10,35 @@ EPICS Motor Record의 주요 PV 기능 정의와 상세 계산 로직을 포함�
 XA07A-L202 스테이지의 기구학적 사양을 기반으로 EPICS Motor 레코드의 필수 필드 값을 계산합니다.
 
 ### 사양 (Specifications)
-- **Model:** XA07A-L202
-- **Motor:** Oriental Motor PK523HPMB (5-phase stepper)
-- **Basic Step Angle:** 0.36° (1000 steps/revolution)
-- **Mechanics:** Ball Screw
-- **Lead (Pitch):** 1.0 mm (1000 $\mu$m)
+- **Model Number:** XA07A-L202
+- **Mirror Model Number:** XA07A-L202-R
+- **Table Size:** 70mm × 70mm
+- **Guide Mechanism:** Linear Guide
+- **Motion Range:** ±35mm
+- **Lead Mechanism:** Ball Screw, Lead 1.0mm
+- **Resolution (Full/Half Step):** 1μm / 0.5μm
+- **Resolution (Micro Step 1/20 div):** 0.05μm
+- **Maximum Speed:** 5mm/sec
+- **Key Performance Metrics:**
+    - Accumulated Lead Error: ≦8μm/70mm (Ave. 2.31μm/70mm)
+    - Repeatability: ≦±0.5μm (Ave. ±0.06μm)
+    - Lost Motion: ≦1μm (Ave. 0.41μm)
+    - Straightness (Horizontal): ≦3μm/70mm (Ave. 1.18μm/70mm)
+    - Straightness (Vertical): ≦3μm/70mm (Ave. 0.73μm/70mm)
+    - Backlash: ≦1μm (Ave. 0.16μm)
+    - Moment Load Stiffness: 0.18 arcsec/N cm (Ave. 0.09 arcsec/N cm)
+    - Load Capacity: 68.6N (7kgf)
+- **Material:** Aluminum Alloy
+- **Finishing:** Clear Matt Anodizing
+- **Weight:** 1.15kg
+- **Electromechanical Specs:**
+    - Sensor Model: F-107 (LIMIT), F-108 (HOME)
+    - Motor Shaft Diameter: Φ5mm (Conformance option handle: A type)
+    - 5 Phase Stepper Motor: Oriental motor: PK523HPMB
+    - Connector: 20Pin Round (Hirose: RP13A-12JG-20PC)
+    - 2 Phase Stepper Option (XA07A-L202-BM):
+        - Motor: Oriental motor: PKP225D15B2
+        - Connector: 20Pin Round (Hirose: RP13A-12JG-20PC)
 
 ### MRES 설정 상세 가이드 (Resolution Calculation)
 EPICS Motor Record의 `.MRES` (Motor Resolution) 필드는 모터가 1 스텝 회전할 때 스테이지가 실제로 이동하는 거리(EGU, mm)를 정의합니다.
@@ -23,18 +47,25 @@ EPICS Motor Record의 `.MRES` (Motor Resolution) 필드는 모터가 1 스텝 �
 $$MRES = \frac{UREV}{SREV}$$
 
 *   **UREV (Units per Revolution):** 모터 1회전 당 이동 거리 = **1.0 mm** (Lead)
-*   **SREV (Steps per Revolution):** 모터 1회전 당 필요 펄스 수 (드라이버 설정에 의존)
+*   **SREV (Steps per Revolution):** 모터 1회전 당 필요 펄스 수
+    *   5-phase Standard Motor (0.72°/step): 500 steps/rev
+    *   (Full Step Res 1um -> 1.0mm / 500 = 0.002mm? No. Spec says Full Step = 1um.)
+    *   Means Motor must be **1000 steps/rev** (High Res 0.36°) OR 500 steps/rev with half-step driver as "Full".
+    *   Given Spec: "Resolution Full/Half Step : 1μm/0.5μm"
+    *   Wait, Lead 1.0mm.
+    *   If 1000 steps/rev (0.36°): 1.0 / 1000 = 0.001mm = 1μm. (Matches Spec).
+    *   So the base motor is likely 0.36 deg/step (High Resolution type).
 
 **XA07A-L202 적용 예시:**
 
-1.  **Full Step (기본):**
-    *   Step Angle: 0.36° $\rightarrow$ $360 / 0.36 = 1000$ Steps/Rev
+1.  **Full Step (1μm):**
+    *   Step Angle: 0.36° (1000 steps/rev)
     *   $MRES = 1.0 / 1000 = \mathbf{0.001}$ mm
-2.  **Half Step (추천 - 일반적):**
+2.  **Half Step (0.5μm) - Recommended:**
     *   Driver Setting: 2-div (Half step)
     *   Steps/Rev: $1000 \times 2 = 2000$ Steps/Rev
     *   $MRES = 1.0 / 2000 = \mathbf{0.0005}$ mm
-3.  **Micro Step (1/20):**
+3.  **Micro Step (1/20) (0.05μm):**
     *   Driver Setting: 20-div
     *   Steps/Rev: $1000 \times 20 = 20000$ Steps/Rev
     *   $MRES = 1.0 / 20000 = \mathbf{0.00005}$ mm
@@ -47,6 +78,9 @@ $$MRES = \frac{UREV}{SREV}$$
 | **(P)(M).SREV** | Steps per Revolution | **2000** |
 | **(P)(M).MRES** | Motor Resolution | **0.0005** |
 | **(P)(M).EGU** | Engineering Units | **mm** |
+| **(P)(M).HLM** | User High Limit | **34.0** |
+| **(P)(M).LLM** | User Low Limit | **-34.0** |
+| **(P)(M).VELO** | Velocity (Max 5.0) | **2.0** |
 
 ---
 
@@ -71,7 +105,7 @@ $$MRES = \frac{UREV}{SREV}$$
 
 ### 적용된 주요 파라미터 상세
 - **MRES (0.0005)**: XA07A-L202의 리드 피치(1.0mm)와 Half-step(2000 steps/rev) 설정을 기준으로 계산된 분해능입니다.
-- **VELO/VMAX (2.0 / 4.0)**: 매뉴얼의 최대 속도 사양을 기반으로, 장비 보호를 위한 안전 계수를 적용한 속도값입니다.
+- **VELO/VMAX (2.0 / 5.0)**: 최대 속도 사양(5mm/s)을 고려하여 안전하게 2.0mm/s로 설정했습니다.
 - **HLM/LLM (34.0 / -34.0)**: 실제 스트로크(±35mm)보다 1mm의 여유를 둔 소프트웨어 리미트 값입니다.
 - **PREC (4)**: 0.0005 단위의 정밀도를 표현하기 위해 소수점 4자리까지 표시하도록 설정했습니다.
 

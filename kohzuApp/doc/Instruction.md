@@ -135,14 +135,128 @@ NotebookLM 대신 제조사 공식 사양을 기반으로 **MRES, VELO, Soft Lim
 
 
 
+---
+## 📋 4. 작업지시 (User Instruction)
+1. RA07A-W02 가이드 문서 업데이트
+  - Model Number : RA07A-W02
+  - Mirror Model Number :RA07A-W02-R
+  - Table Size :Φ68mm
+  - Guide Mechanism : angular bearing
+  - Angular Range : ±135°
+  - Lead Mechanism : Worm & Worm Wheel 1/90
+  - Resolution Full/Half Step : 0.004° / 0.002°
+  - Resolution Micro Step (1/20 div) : 0.0002°
+  - Maximum Speed : 20°/sec
+  - Accumulated Lead Error : ≦0.015°/360° (AVE. 0.0045°/360° )
+  - Lost Motion : ≦0.006° (AVE. 0.0026°)
+  - Angular Repeatability : ≦0.002°(AVE. 0.0004° )
+  - Pitch Error : ≦0.01°/4°(AVE. 0.0027°/4°)
+  - Backlash : ≦0.001°(AVE. 0.0001°)
+  - Moment Load Stiffness : 0.51 arcsec/N cm (AVE. 0.32 arcsec/N cm)
+  - Load Capacity : 58.8N (6kgf)
+  - Surface Runout : ≦15μm/360° (AVE. 5.53μm/360° )
+  - Eccentricity : ≦ 5μｍ/360°(AVE. 2.74μm/360° )
+  - Material : Aluminum Alloy
+  - Finishing : Clear Matt Anodizing
+  - Weight : 1.2kg
+
+2. ZA07A-V1F01 가이드 문서 업데이트
+  - Model Number : ZA07A-V1F01
+  - Table Size : 70mm×70mm
+  - Guide Mechanism : Tetrahedral Flat Roller
+  - Motion Range : ±10mm
+  - Lead Mechanism : Ground Screw, Lead 0.5mm, 1/2belt drive
+  - Resolution Full/Half Step : 0.5μm/0.25μm
+  - Resolution Micro Step (1/20 div) : 0.025μm
+  - Maximum Speed : 2.5mm/sec
+  - Repeatability : ≦±0.2μm (AVE. ±0.05μm)
+  - Lost Motion : ≦2μm (AVE. 0.48μm)
+  - Verticality : ≦ 6μm/20mm (AVE. 1.62μm/20mm)
+  - Load Capacity : 117.6N (12kgf)
+  - Material : Aluminum Alloy
+  - Finishing : Clear Matt Anodizing
+
+### ✅ 4.1 Todo List (AI Analysis)
+- [x] **Step 1: Update Specification Data**
+  - **RA07A-W02**: 상세 스펙(Lost Motion, Backlash 등 포함) 및 Worm Wheel 1/90, 0.004 deg/step(Full) 정보 반영.
+  - **ZA07A-V1F01**: 상세 스펙(Repeatability, Load Capacity 등) 및 Lead Mechanism 정보 반영.
+- [x] **Step 2: Re-calculate PVs**
+  - RA07A-W02의 경우 Worm 1/90 조건에서 Full Step 0.004도를 만족하려면 1000 steps/rev 모터 또는 드라이버 설정이 전제됨을 계산식에 명시.
+
+### 📝 4.2 Result (Execution Summary)
+요청하신 기구부 및 성능 사양을 `RA07A-W02_Control_Guide.md` 및 `ZA07A-V1F01_Control_Guide.md` 문서에 빠짐없이 상세 업데이트했습니다.
+특히 성능 지표(Lost Motion, Backlash 등)까지 포함하여 문서의 신뢰도를 높였습니다.
+
+### 🛠 4.3 변경 사항 (Summary of Changes)
+- **수정:** `kohzuApp/doc/RA07A-W02_Control_Guide.md` - 전체 사양 섹션 교체 및 MRES 로직 보강
+- **수정:** `kohzuApp/doc/ZA07A-V1F01_Control_Guide.md` - 전체 사양 섹션 교체 및 상세 스펙 추가
 
 
 
 
 
+---
+## 📋 5. 작업지시 (User Instruction)
+1. XA07A-L202 가이드 문서 업데이트
+  - Model Number : XA07A-L202
+  - Mirror Model Number : XA07A-L202-R
+  - Table Size : 70mm×70mm
+  - Guide Mechanism : Linear Guide
+  - Motion Range : ±35mm
+  - Lead Mechanism : Ball Screw, Lead 1.0mm
+  - Resolution Full/Half Step : 1μm/0.5μm
+  - Resolution Micro Step (1/20 div) : 0.05μm
+  - Maximum Speed : 5mm/sec
+  - Accumulated Lead Error : ≦ 8μm/70mm(AVE. 2.31μm/70mm)
+  - Repeatability : ≦±0.5μm (AVE. ±0.06μm)
+  - Lost Motion : ≦ 1μm (AVE. 0.41μm)
+  - Straightness (Horizontal) : ≦ 3μm/70mm(AVE. 1.18μm/70mm)
+  - Straightness (Vertical) : ≦ 3μm/70mm(AVE. 0.73μm/70mm)
+  - Backlash : ≦ 1μm (AVE. 0.16μm)
+  - Moment Load Stiffness : 0.18 arcsec/N cm (AVE. 0.09 arcsec/N cm)
+  - Load Capacity : 68.6N (7kgf)
+  - Material : Aluminum Alloy
+  - Finishing : Clear Matt Anodizing
+  - Weight : 1.15kg
+  - Sensor Model : F-107(LIMIT), F-108(HOME)
+  - Motor Shaft Diameter : Φ5mm , Conformance option handle：A type
+  - 5 Phase Stepper Motor : Oriental motor: PK523HPMB
+  - Connector : 20Pin Round (Hirose: RP13A-12JG-20PC)
+  - 2 phase stepper motor is available : XA07A-L202-BM
+  - 2 Phase Stepper Motor : Oriental motor: PKP225D15B2
+  - 2 Phase Stepper Motor Connector : 20Pin Round (Hirose: RP13A-12JG-20PC)
 
 
+2. RA07A-W02 가이드 문서 업데이트
+  - Sensor Model : F-101(HOME, LIMIT)
+  - Motor Shaft Diameter : Φ5mm , Conformance option handle：A type
+  - 5 Phase Stepper Motor : Oriental motor: PK544PMB
+  - Connector : Hirose: RP13A-12JG-20PC
+  - 2 phase stepper motor is available : RA07A-W02-BM
+  - 2 Phase Stepper Motor : Oriental motor: PKP244D15B
+  - 2 Phase Stepper Motor Connector : Hirose: RP13A-12JG-20PC
 
+3. ZA07A-V1F01 가이드 문서 업데이트
+  - Sensor Model : F-115(HOME, LIMIT)
+  - Motor Shaft Diameter : Φ5mm , Conformance option handle：A type
+  - 5 Phase Stepper Motor : Oriental motor: C090P-9015P
+  - Connector : Hirose: RP13A-12JG-20PC
+  - 2 phase stepper motor is available : ZA07A-V1F01-BM
+  - 2 Phase Stepper Motor : Oriental motor: PKP244D15B2
 
+### ✅ 5.1 Todo List (AI Analysis)
+- [x] **Step 1: Update XA07A-L202**
+  - 전체 기구부, 성능 사양, 모터 및 센서 상세 모델명 반영 완료.
+  - Full Step 분해능 1μm 조건에 맞추어 Motor Step Angle (0.36°) 추론 및 계산식 반영.
+- [x] **Step 2: Update RA07A-W02 & ZA07A-V1F01**
+  - 센서, 모터, 커넥터 등의 전장품(Electromechanical) 사양 상세 추가.
+  - 2상 스테퍼 모터(BM 타입) 옵션 정보 추가.
 
+### 📝 5.2 Result (Execution Summary)
+요청하신 3개 모델(XA07A-L202, RA07A-W02, ZA07A-V1F01)의 제어 가이드 문서를 모두 최신 사양으로 업데이트했습니다.
+특히 **센서 모델, 모터 상세 사양, 커넥터 규격** 등 하드웨어 연동에 필수적인 정보를 보강하여 현장 셋업 시의 혼선을 방지하도록 했습니다.
 
+### 🛠 5.3 변경 사항 (Summary of Changes)
+- **수정:** `kohzuApp/doc/XA07A-L202_Control_Guide.md` (전체 사양 업데이트)
+- **수정:** `kohzuApp/doc/RA07A-W02_Control_Guide.md` (전장품 사양 추가)
+- **수정:** `kohzuApp/doc/ZA07A-V1F01_Control_Guide.md` (전장품 사양 추가)

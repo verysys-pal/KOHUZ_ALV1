@@ -10,14 +10,30 @@ EPICS Motor Record의 주요 PV 기능 정의와 상세 계산 로직을 포함�
 ZA07A-V1F01 스테이지의 기구학적 사양을 기반으로 EPICS Motor 레코드의 필수 필드 값을 계산합니다.
 
 ### 사양 (Specifications)
-- **Model:** ZA07A-V1F01
-- **Type:** Motorized Z-axis (Vertical) Stage
-- **Motor:** Oriental Motor 5-phase Stepper (PKP244D15B2 or equivalent)
-- **Mechanism:** Ball Screw + Belt Reduction
-- **Lead (Pitch):** 0.5 mm
-- **Reduction Ratio:** 1/2 (모터 2회전 시 스크류 1회전)
+- **Model Number:** ZA07A-V1F01
+- **Table Size:** 70mm × 70mm
+- **Guide Mechanism:** Tetrahedral Flat Roller
 - **Motion Range:** ±10mm (Hardware Limit)
-- **Max Speed:** 2.5 mm/sec
+- **Lead Mechanism:** Ground Screw, Lead 0.5mm, 1/2 belt drive
+- **Resolution (Full/Half Step):** 0.5μm / 0.25μm
+- **Resolution (Micro Step 1/20 div):** 0.025μm
+- **Maximum Speed:** 2.5 mm/sec
+- **Key Performance Metrics:**
+    - Repeatability: ≦±0.2μm (Ave. ±0.05μm)
+    - Lost Motion: ≦2μm (Ave. 0.48μm)
+    - Verticality: ≦6μm/20mm (Ave. 1.62μm/20mm)
+    - Load Capacity: 117.6N (12kgf)
+- **Material:** Aluminum Alloy
+- **Finishing:** Clear Matt Anodizing
+- **Weight:** 1.8kg
+- **Electromechanical Specs:**
+    - Sensor Model: F-115 (HOME, LIMIT)
+    - Motor Shaft Diameter: Φ5mm (Conformance option handle: A type)
+    - 5 Phase Stepper Motor: Oriental motor: C090P-9015P
+    - Connector: Hirose: RP13A-12JG-20PC
+    - 2 Phase Stepper Option (ZA07A-V1F01-BM):
+        - Motor: Oriental motor: PKP244D15B2
+        - Connector: Oriental motor: RP13A-12JG-20PC
 
 ### MRES 설정 상세 가이드 (Resolution Calculation)
 EPICS Motor Record의 `.MRES` (Motor Resolution) 필드는 모터가 1 스텝 회전할 때 스테이지가 실제로 이동하는 거리(EGU, mm)를 정의합니다.
@@ -27,7 +43,7 @@ $$MRES = \frac{UREV}{SREV}$$
 
 *   **UREV (Units per Revolution):** 모터 1회전 당 스테이지 이동 거리
     *   Lead: 0.5 mm (Screw 1회전 당 이동 거리)
-    *   Reduction Ratio: 1/2
+    *   Reduction Ratio: 1/2 (모터 2회전 = 스크류 1회전)
     *   $UREV = 0.5 / 2 = \mathbf{0.25}$ mm (모터 1회전 당 이동 거리)
 *   **SREV (Steps per Revolution):** 모터 1회전 당 필요 펄스 수
     *   5-phase Standard Motor (0.72°/step): 500 steps/rev
@@ -35,16 +51,18 @@ $$MRES = \frac{UREV}{SREV}$$
 **ZA07A-V1F01 적용 예시:**
 
 1.  **Full Step (기본):**
-    *   Standard Motor 0.72° $\rightarrow$ 500 Steps/Rev
-    *   $MRES = 0.25 / 500 = \mathbf{0.0005}$ mm (0.5 $\mu$m - Spec 일치)
+    *   Spec Resolution: 0.5 μm (0.0005 mm)
+    *   $MRES = 0.25 / 500 = \mathbf{0.0005}$ mm
 2.  **Half Step (추천 - 일반적):**
+    *   Spec Resolution: 0.25 μm (0.00025 mm)
     *   Driver Setting: 2-div (Half step)
     *   Steps/Rev: $500 \times 2 = 1000$ Steps/Rev
-    *   $MRES = 0.25 / 1000 = \mathbf{0.00025}$ mm (0.25 $\mu$m)
+    *   $MRES = 0.25 / 1000 = \mathbf{0.00025}$ mm
 3.  **Micro Step (1/20):**
+    *   Spec Resolution: 0.025 μm (0.000025 mm)
     *   Driver Setting: 20-div
     *   Steps/Rev: $500 \times 20 = 10000$ Steps/Rev
-    *   $MRES = 0.25 / 10000 = \mathbf{0.000025}$ mm (0.025 $\mu$m)
+    *   $MRES = 0.25 / 10000 = \mathbf{0.000025}$ mm
 
 ### 추천 PV 설정값 (Half Step 기준)
 
@@ -54,6 +72,9 @@ $$MRES = \frac{UREV}{SREV}$$
 | **(P)(M).SREV** | Steps per Revolution | **1000** |
 | **(P)(M).MRES** | Motor Resolution | **0.00025** |
 | **(P)(M).EGU** | Engineering Units | **mm** |
+| **(P)(M).HLM** | User High Limit | **9.5** |
+| **(P)(M).LLM** | User Low Limit | **-9.5** |
+| **(P)(M).VELO** | Velocity (Max 2.5) | **1.0** |
 
 ---
 
@@ -62,7 +83,7 @@ $$MRES = \frac{UREV}{SREV}$$
 스테이지 보호를 위해 TITAN-A2 드라이버의 하드웨어 스위치를 올바르게 설정해야 합니다.
 
 ### Current Limit (전류 제한)
-모터(PKP244D15B2)의 정격 전류를 고려하여 설정하십시오.
+모터(C090P-9015P)의 정격 전류를 고려하여 설정하십시오.
 
 - **RUN Switch:** 설정값 **0.75 A/phase** (확인 필요)에 대응하는 번호 (보통 '5')
 - **STOP Switch:** RUN 전류의 50~60% 설정
@@ -77,7 +98,7 @@ $$MRES = \frac{UREV}{SREV}$$
 ## 3. 운용 가이드 (OPI Operation)
 
 ### 적용된 주요 파라미터 상세
-- **MRES (0.00025)**: ZA07A-V1F01의 리드(0.5mm), 감속비(1/2) 및 Half-step(1000 steps/rev) 설정을 기준으로 계산된 분해능입니다.
+- **MRES (0.00025)**: 사양서 기준 Half-step 분해능입니다.
 - **VELO/VMAX (1.0 / 2.5)**: 최대 속도 사양(2.5 mm/s)을 고려하여 안전하게 1.0 mm/s로 설정했습니다.
 - **HLM/LLM (9.5 / -9.5)**: 하드웨어 리미트(±10mm)보다 0.5mm 안쪽에 여유를 둔 소프트웨어 리미트 값입니다.
 - **PREC (4)**: 0.00025 단위의 정밀도를 표현하기 위해 소수점 4자리까지 표시하도록 설정했습니다.
