@@ -151,6 +151,56 @@
                 background-position: 20px 20px;
             }
         }
+
+        /* Task 20: Custom Tooltip */
+        .pv-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 100;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .pv-tooltip.show {
+            opacity: 1;
+        }
+
+        /* Debug Overlay Mode */
+        /* Debug Overlay Mode */
+        .debug-mode [data-actual-pv]::after {
+            content: attr(data-actual-pv);
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            font-size: 9px;
+            padding: 1px 3px;
+            z-index: 999;
+            pointer-events: none;
+            border-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Make sure parents have relative positioning for absolute children */
+        /* Make sure parents have relative positioning for absolute children */
+        [data-pv],
+        [data-led-pv],
+        [data-tooltip-pv] {
+            position: relative;
+        }
     </style>
 </head>
 
@@ -174,8 +224,8 @@
                     </div>
                     <h1 class="text-sm md:text-xl font-bold text-white tracking-tight">
                         Kohzu Motor Control
-                        <span class="hidden md:inline text-xs text-slate-500 font-normal ml-2">(v1.10 UI
-                            Fixes)</span>
+                        <span class="hidden md:inline text-xs text-slate-500 font-normal ml-2">(v1.13 Text
+                            Fix)</span>
                     </h1>
                 </div>
 
@@ -271,7 +321,7 @@
                             </div>
                         </div>
                         <div class="col-span-4 flex flex-col justify-end">
-                            <button onclick="app.write('$(P)$(M).STOP', 1)"
+                            <button onclick="app.write('$(P)$(M).STOP', 1)" data-tooltip-pv="$(P)$(M).STOP"
                                 class="h-[52px] w-full bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg border-2 border-red-500 shadow-lg shadow-red-900/30 flex items-center justify-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
@@ -295,7 +345,7 @@
                             </div>
                         </div>
                         <div class="grid grid-cols-4 gap-3">
-                            <button onclick="app.write('$(P)$(M).TWR', 1)"
+                            <button onclick="app.write('$(P)$(M).TWR', 1)" data-tooltip-pv="$(P)$(M).TWR"
                                 class="btn btn-secondary flex flex-col items-center py-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" viewBox="0 0 20 20"
                                     fill="currentColor">
@@ -306,14 +356,16 @@
                                 Tweak -
                             </button>
                             <button onclick="app.write('$(P)$(M).JOGR', 1)" onmouseup="app.write('$(P)$(M).JOGR', 0)"
+                                data-tooltip-pv="$(P)$(M).JOGR"
                                 class="btn btn-secondary flex flex-col items-center py-3 border border-slate-600 bg-slate-800">
                                 <span class="text-xs uppercase tracking-wide">Jog -</span>
                             </button>
                             <button onclick="app.write('$(P)$(M).JOGF', 1)" onmouseup="app.write('$(P)$(M).JOGF', 0)"
+                                data-tooltip-pv="$(P)$(M).JOGF"
                                 class="btn btn-secondary flex flex-col items-center py-3 border border-slate-600 bg-slate-800">
                                 <span class="text-xs uppercase tracking-wide">Jog +</span>
                             </button>
-                            <button onclick="app.write('$(P)$(M).TWF', 1)"
+                            <button onclick="app.write('$(P)$(M).TWF', 1)" data-tooltip-pv="$(P)$(M).TWF"
                                 class="btn btn-secondary flex flex-col items-center py-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" viewBox="0 0 20 20"
                                     fill="currentColor">
@@ -536,15 +588,19 @@
                         <label class="text-xs text-slate-400">Set Position (SET)</label>
                         <div class="flex gap-2 bg-slate-800 p-1 rounded border border-slate-600">
                             <button onclick="app.write('$(P)$(M).SET', 0)" id="btn-set-use"
+                                data-tooltip-pv="$(P)$(M).SET=0"
                                 class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 border border-transparent hover:border-slate-500 hover:text-white">Use</button>
                             <button onclick="app.write('$(P)$(M).SET', 1)" id="btn-set-set"
+                                data-tooltip-pv="$(P)$(M).SET=1"
                                 class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 border border-transparent hover:border-slate-500 hover:text-white">Set</button>
                         </div>
                         <span data-pv="$(P)$(M).SET" class="hidden"></span>
                     </div>
 
-                    <button onclick="app.write('$(P)$(M).HOMF', 1)" class="btn btn-secondary text-xs">Home Fwd</button>
-                    <button onclick="app.write('$(P)$(M).HOMR', 1)" class="btn btn-secondary text-xs">Home Rev</button>
+                    <button onclick="app.write('$(P)$(M).HOMF', 1)" data-tooltip-pv="$(P)$(M).HOMF"
+                        class="btn btn-secondary text-xs">Home Fwd</button>
+                    <button onclick="app.write('$(P)$(M).HOMR', 1)" data-tooltip-pv="$(P)$(M).HOMR"
+                        class="btn btn-secondary text-xs">Home Rev</button>
 
                     <div class="col-span-2 pt-2 border-t border-slate-700">
                         <label class="text-xs text-slate-400 mb-1 block">Direction (DIR)</label>
@@ -681,8 +737,11 @@
                 this.updateStatus(true);
 
                 // Scan DOM for PVs
-                document.querySelectorAll('[data-pv], [data-led-pv]').forEach(el => {
-                    const pvAttr = el.hasAttribute('data-pv') ? 'data-pv' : 'data-led-pv';
+                document.querySelectorAll('[data-pv], [data-led-pv], [data-tooltip-pv]').forEach(el => {
+                    let pvAttr = 'data-pv';
+                    if (el.hasAttribute('data-led-pv')) pvAttr = 'data-led-pv';
+                    if (el.hasAttribute('data-tooltip-pv')) pvAttr = 'data-tooltip-pv';
+
                     const raw = el.getAttribute(pvAttr);
                     const resolved = this.resolve(raw);
 
@@ -694,10 +753,46 @@
                     }
 
                     this.pvs.add(resolved);
+
+                    // Task 20.2: Auto-assign title & Custom Tooltip Logic
+                    el.setAttribute('title', resolved); // Built-in tooltip fallback
+
+                    let tooltipTimeout;
+                    let tooltipEl = null;
+
+                    el.addEventListener('mouseenter', () => {
+                        tooltipTimeout = setTimeout(() => {
+                            // Create Tooltip
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.className = 'pv-tooltip';
+                            tooltipEl.innerText = resolved;
+                            el.appendChild(tooltipEl);
+
+                            // Trigger reflow for transition
+                            void tooltipEl.offsetWidth;
+                            tooltipEl.classList.add('show');
+                        }, 1000);
+                    });
+
+                    el.addEventListener('mouseleave', () => {
+                        clearTimeout(tooltipTimeout);
+                        if (tooltipEl) {
+                            tooltipEl.remove();
+                            tooltipEl = null;
+                        }
+                    });
                 });
 
                 // Subscribe
                 this.ws.send(JSON.stringify({ type: 'subscribe', pvs: Array.from(this.pvs) }));
+
+                // Task 20.3: Debug Overlay (Ctrl Key)
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Control') document.body.classList.add('debug-mode');
+                });
+                document.addEventListener('keyup', (e) => {
+                    if (e.key === 'Control') document.body.classList.remove('debug-mode');
+                });
             }
 
             updateStatus(connected) {
@@ -734,6 +829,9 @@
                     } else if (el.tagName === 'SELECT') {
                         el.value = data.value;
                     } else {
+                        // Skip if it is a tooltip-only element (Action Button)
+                        if (el.hasAttribute('data-tooltip-pv')) return;
+
                         // Formatting
                         let val = data.value;
                         if (typeof val === 'number') {
