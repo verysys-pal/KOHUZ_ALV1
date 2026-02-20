@@ -11,6 +11,8 @@ import epics
 import json
 import threading
 
+import os
+
 # Global state
 connected_clients = set()
 active_pvs = {}
@@ -24,7 +26,7 @@ def global_pv_callback(pvname=None, value=None, char_value=None, **kwargs):
     if pvname is not None and value is not None:
         msg_data = {"type": "update", "pv": pvname, "value": value}
         if char_value:
-             msg_data["char_value"] = char_value
+            msg_data["char_value"] = char_value
              
         # Schedule broadcast on main thread safely
         if main_loop:
@@ -91,17 +93,26 @@ class EPICSWebSocket(tornado.websocket.WebSocketHandler):
                      "char_value": p.char_value
                  }))
 
+class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+
 def make_app():
     return tornado.web.Application([
         (r"/ws", EPICSWebSocket),
+        (r"/(.*)", NoCacheStaticFileHandler, {
+            "path": os.path.dirname(__file__), 
+            "default_filename": "motorx_all.html"
+        }),
     ])
 
 if __name__ == "__main__":
     app = make_app()
     port = 8888
     try:
-        app.listen(port)
-        print(f"EPICS Web Gateway listening on ws://localhost:{port}/ws")
+        # Listen on all interfaces (0.0.0.0)
+        app.listen(port, address="0.0.0.0")
+        print(f"EPICS Web Gateway listening on http://0.0.0.0:{port}/")
     except OSError:
         port = 9999
         app.listen(port)

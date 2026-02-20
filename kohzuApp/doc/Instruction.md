@@ -695,3 +695,290 @@ google-chrome /usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1/kohzuApp/opi/motorx
 ### 🔍 검증 결과 (Validation)
 - [x] HTML 구조 확인 (Flex Layout 정상)
 - [x] Subscription 로직 확인 (`data-pv` 존재 -> `onOpen`에서 구독 요청 -> `onMessage`에서 버튼 상태 업데이트)
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+## 📋 2. 작업지시 (User Instruction)
+1. 모바일에서 motorx_all.html 실행했는데, 접속이 안되는데 어떻게 해야 하는가?
+
+### ✅ 2.1 Todo List (AI Analysis)
+- [x] **Step 1: Analyis** - 모바일 접속 실패 원인 분석
+  - **Server Bind**: `web_gateway.py`가 기본적으로 `localhost`만 청취할 수 있음 -> `0.0.0.0`으로 변경 필요
+  - **Helper Server**: HTML 파일을 모바일로 전송할 웹 서버 기능 부재 -> `web_gateway.py`에 정적 파일 호스팅 기능 추가
+  - **Hardcoded URL**: `motorx_all.html` 내 WebSocket 주소가 `ws://localhost:8888`로 고정됨 -> 접속한 호스트네임에 따라 동적으로 변경되도록 수정 (`window.location.hostname`)
+- [x] **Step 2: Server Update** - `web_gateway.py` 수정
+  - `StaticFileHandler` 추가 (HTML 파일 서빙)
+  - `app.listen(port, address="0.0.0.0")` 적용
+- [x] **Step 3: Client Update** - `motorx_all.html` 수정
+  - `wsUrl` 생성 로직 개선: `window.location.hostname` 활용
+- [x] **Step 4: Documentation** - 모바일 접속 가이드 작성
+
+### 📝 2.2 Result (Mobile Access Enabled)
+*모바일 및 외부 장치에서 제어 화면에 접속할 수 있도록 시스템을 개선하였습니다.*
+
+### 🛠 2.3 변경 사항 (Summary of Changes)
+- **Server (`web_gateway.py`):**
+  - 이제 웹 서버 역할도 겸합니다. HTML 파일을 별도로 열 필요 없이 Gateway 주소로 접속하면 됩니다.
+  - 모든 네트워크 인터페이스(`0.0.0.0`)에서 연결을 수락합니다.
+- **Client (`motorx_all.html`):**
+  - 접속한 브라우저의 주소창(URL)을 기반으로 WebSocket 주소를 자동 설정합니다.
+  - 별도의 설정 없이 IP 주소만으로 접속 가능합니다.
+
+### 💡 2.4 모바일 접속 가이드 (Mobile Access Guide)
+
+**1. PC에서 Gateway 실행**
+```bash
+cd /usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1/kohzuApp/opi
+python3 web_gateway.py
+```
+*출력 메시지 예시: `EPICS Web Gateway listening on http://0.0.0.0:8888/`*
+
+**2. PC의 IP 주소 확인**
+터미널에서 `hostname -I` 명령어로 IP 확인 (예: `192.168.97.37`)
+
+**3. 모바일 브라우저 접속**
+스마트폰 크롬/사파리 주소창에 다음 형식으로 입력:
+`http://<PC_IP_ADDRESS>:8888/motorx_all.html`
+
+*예: `http://192.168.97.37:8888/motorx_all.html`*
+
+**4. 확인**
+- 화면이 로드되고, 상단 `Status`가 **Connected**로 표시되는지 확인합니다.
+- 만약 접속이 안 된다면 PC의 방화벽(Firewall) 설정을 확인하세요.
+
+### 🔍 검증 결과 (Validation)
+- [x] `web_gateway.py` 실행 시 외부 접속 허용 로그 확인 (`http://0.0.0.0:...`)
+- [x] `motorx_all.html` 코드 내 동적 호스트 할당 로직 적용 확인
+
+
+
+
+
+
+
+
+
+---
+## 📋 3. 작업지시 (User Instruction)
+1. `hostname -I` 결과 분석
+  - `192.168.97.37`: 내부망(Lab) IP
+  - `192.168.1.100`: 외부망(Office) IP
+  - `100.112.62.121`: VPN IP
+2. 다른 pc에서 아래의 주소로 접속했으나 실패
+  - http://192.168.97.37:8888/motorx_all.html
+
+### ✅ 3.1 Todo List (AI Analysis)
+- [x] **Step 1: Connectivity Check (Local)**
+  - 서버 내부에서 `curl http://192.168.97.37:8888/motorx_all.html` 실행 결과 **성공 (Status 200 OK)**.
+  - 즉, 서비스(`web_gateway.py`)는 정상 동작 중이며 해당 IP/Port로 리스닝 중임.
+- [x] **Step 2: Network Analysis (Crucial)**
+  - **IP 선택 오류 가능성**: 접속하려는 PC가 **Office망(192.168.1.x)**에 있다면, **Lab망 IP(192.168.97.37)**로는 접속이 불가능할 수 있음(라우팅 부재).
+  - 해결책: 접속 PC와 동일한 네트워크 대역의 IP를 사용해야 함. (예: Office PC -> `192.168.1.100`)
+- [x] **Step 3: Firewall Check**
+  - 네트워크가 맞아도 접속이 안 된다면 **방화벽(Firewall)**이 8888번 포트를 차단 중일 확률 높음.
+
+### 📝 3.2 Result (Diagnosis)
+*서비스는 정상이나 방화벽 차단 또는 네트워크 대역 불일치로 인한 접속 실패입니다.*
+
+### 🛠 3.3 해결 방법 (Troubleshooting)
+
+**1. 올바른 IP 주소 사용**
+접속하려는 PC의 네트워크 환경에 맞는 IP를 선택하세요.
+- **같은 연구실(Lab) 내부 PC라면:** `http://192.168.97.37:8888/...`
+- **사무실(Office) PC라면:** `http://192.168.1.100:8888/...`
+- **외부 VPN 접속 중이라면:** `http://100.112.62.121:8888/...`
+
+**2. 방화벽 포트 개방 (필수)**
+서버에서 터미널을 열고 다음 명령어로 8888번 포트를 개방합니다.
+
+*Ubuntu/Debian (ufw)*:
+```bash
+sudo ufw allow 8888/tcp
+sudo ufw reload
+```
+
+*CentOS/RHEL (firewalld)*:
+```bash
+sudo firewall-cmd --permanent --add-port=8888/tcp
+sudo firewall-cmd --reload
+```
+
+**3. 네트워크 연결 확인**
+- 클라이언트 PC에서 해당 IP로 `ping`을 시도하여 물리적 연결을 확인합니다.
+  ```bash
+  # Office PC 예시
+  ping 192.168.1.100
+  ```
+
+### 🔍 검증 결과 (Validation)
+- [x] 로컬 Loopback 및 IP 접속 테스트 성공 (`curl` 확인)
+- [ ] 클라이언트 PC 네트워크 대역에 맞는 IP로 재접속 시도 필요
+
+
+
+
+
+
+
+---
+## 📋 4. 작업지시 (User Instruction)
+1. motorx_all.html 사용 가이드를 작성
+2. /usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1/kohzuApp/doc 폴더에 생성
+
+### ✅ 4.1 Todo List (AI Analysis)
+- [x] **Step 1: OPI Analysis** - `motorx_all.html`의 기능 전체 분석 (Drive, Status, Scan, Limits 등)
+- [x] **Step 2: Documentation Setup** - `motorx_all_HTML_User_Guide.md` 파일 생성
+  - 개요 및 접속 방법 (PC/Mobile)
+  - 인터페이스 구성 요소별 상세 설명 (Drive, Scan, Status, Dynamics, Limits, Calib)
+  - 문제 해결 (Troubleshooting) 가이드 포함
+- [x] **Step 3: Verification** - 파일 생성 확인 (`ls -l`)
+
+### 📝 4.2 Result (Guide Created)
+*HTML 기반 모터 제어 인터페이스 사용 가이드가 생성되었습니다.*
+
+### 🛠 4.3 생성 파일 (Artifacts)
+- **파일명:** `motorx_all_HTML_User_Guide.md`
+- **경로:** `/usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1/kohzuApp/doc/motorx_all_HTML_User_Guide.md`
+- **주요 내용:**
+  - 웹 브라우저를 통한 원격 접속 방법
+  - SPMG(Stop/Pause/Move/Go) 버튼 사용법
+  - 각 카드별(Drive, Status 등) 기능 설명
+  - 모바일 접속 시 주의사항 및 해결 방법
+
+### 🔍 검증 결과 (Validation)
+- [x] 문서 생성 완료 (`motorx_all_HTML_User_Guide.md`)
+- [x] 내용 검토 (Drive, Scan Control, Status 등 모든 기능 포함)
+
+
+
+
+---
+## 📋 5. 작업지시 (User Instruction)
+1. motorx_all.html 사용 가이드를 작성
+2. Dynamics, Scan, Limits, Calib, Resolution, PID Coefficients
+ 카드의 크기를 min=350px, max=400px로 설정
+
+### ✅ 5.1 Todo List (AI Analysis)
+- [x] **Step 1: OPI Analysis** - `motorx_all.html` 구조 재검토
+  - 주요 카드: Dynamics, Soft Limits, Calibration/Homing, Resolution, PID Coefficients
+  - Scan Control은 Step 16에서 Drive Card에 병합되었으므로 별도 수정 불필요 (Drive Card는 이미 적용됨)
+- [x] **Step 2: Implementation** - CSS 클래스 적용
+  - 각 카드의 최상위 `div.card` 요소에 `w-full min-w-[350px] max-w-[400px]` 추가
+  - 대상 카드: Dynamics, Soft Limits, Calibration / Homing, Resolution, PID Coefficients
+- [x] **Step 3: Verification** - 코드 적용 확인
+
+### 📝 5.2 Result (Layout Updated)
+*모든 카드의 크기를 통일감 있게 조정하였습니다.*
+
+### 🛠 5.3 변경 사항 (Summary of Changes)
+- **수정 위치:** `motorx_all.html` (Main Content)
+- **적용 내용:**
+  - `Dynamics`, `Soft Limits`, `Calibration / Homing`, `Resolution`, `PID Coefficients` 카드에 `w-full min-w-[350px] max-w-[400px]` 클래스 적용
+  - 이를 통해 모든 카드가 동일한 너비 제약을 가지게 되어 레이아웃 일관성 확보
+
+### 🔍 검증 결과 (Validation)
+- [x] HTML 코드 내 클래스 변경 확인
+- [x] Scan Card 제외 (Drive Card와 병합 상태 유지)
+
+
+
+
+
+---
+## 📋 6. 작업지시 (User Instruction)
+1. motorx_all.html 사용 가이드를 작성
+2. http://192.168.97.37:8888/motorx_all.html 접속해서 확인했지만, 
+3. Drive & Position 카드만 minmax 적용되고, 
+4. 다른 카드들은 창의 크기만큼 커지고 작아짐 minmax 적용안됨 > 수정필요
+
+### ✅ 6.1 Todo List (AI Analysis)
+- [x] **Step 1: OPI Analysis** - `motorx_all.html`의 CSS 클래스 적용 상태 점검
+  - 일부 카드에서 `min-w`/`max-w` 클래스가 제대로 적용되지 않거나 레이아웃 간섭으로 인해 동작하지 않는 현상 확인
+- [x] **Step 2: CSS Implementation** - Inline Tailwind Class 대신 별도의 CSS 클래스(`.card-responsive`) 정의
+  - `min-width: 350px`, `max-width: 400px`, `width: 100%` 속성 강제 적용
+- [x] **Step 3: Refactoring** - 모든 카드(Limit, Calib, Res, PID 등)에 `.card-responsive` 클래스 일괄 적용
+- [x] **Step 4: User Guide** - HTML 사용 가이드 작성 확인 (`motorx_all_HTML_User_Guide.md` - 기완료)
+
+### 📝 6.2 Result (Fix Complete)
+*모든 카드의 너비가 350px ~ 400px로 일관되게 유지되도록 개선하였습니다.*
+
+### 🛠 6.3 변경 사항 (Summary of Changes)
+- **수정 위치:** `motorx_all.html`
+- **주요 내용:**
+  - CSS 블록에 `.card-responsive` 클래스 추가
+  - 모든 메인 카드의 `class` 속성에서 `w-full min-w-[...] max-w-[...]` 제거 후 `card-responsive` 적용
+  - 이를 통해 브라우저 창 크기 변화에 관계없이 카드가 지정된 범위 내에서만 반응하도록 수정
+
+### 🔍 검증 결과 (Validation)
+- [x] `.card-responsive` 클래스 정의 확인
+- [x] 각 카드 요소에 클래스 적용 확인
+- [x] Drive & Position 카드 레이아웃(Status, Scan 포함) 유지 확인
+
+
+
+## 📋 7. 작업지시 (User Instruction)
+1. motorx_all.html 
+2. google-chrome ${EPICS_PATH}/siteApp/KOHUZ_ALV1/kohzuApp/opi/motorx_all.html > minmax 적용됨
+3. http://192.168.97.37:8888/motorx_all.html > minmax 적용안됨 > 수정필요
+
+### ✅ 7.1 Todo List (AI Analysis)
+- [x] **Step 1: Analyis** - 문제 원인 분석
+  - 로컬 파일(`file://`)에서는 CSS가 정상 동작하나, HTTP(`http://`) 접속 시 업데이트가 안 됨.
+  - 원인: 브라우저가 이전 버전의 HTML/CSS를 캐싱하고 있어 최신 수정본(minmax 스타일)을 불러오지 못함.
+- [x] **Step 2: Server Update** - `web_gateway.py` 수정
+  - `StaticFileHandler`를 커스텀 `NoCacheStaticFileHandler`로 교체
+  - HTTP 헤더에 `Cache-Control: no-store, no-cache` 추가하여 브라우저 캐시 강제 무효화
+- [x] **Step 3: Deployment** - 웹 서버 재시작 (`pkill -f web_gateway.py` -> `python3 web_gateway.py`)
+- [x] **Step 4: User Action Encourgement** - 사용자에게 페이지 새로고침 안내
+
+### 📝 7.2 Result (Fix Complete)
+*웹 서버의 캐시 정책을 변경하여 항상 최신 UI 가 로드되도록 수정하였습니다.*
+
+### 🛠 7.3 변경 사항 (Summary of Changes)
+- **수정 위치:** `web_gateway.py`
+- **주요 내용:**
+  - `NoCacheStaticFileHandler` 클래스 추가
+  - 정적 파일 서빙 시 캐싱 비활성화 헤더 전송
+  - 서버 프로세스 재시작 완료 (New PID 확인됨)
+
+### 🔍 검증 결과 (Validation)
+- [x] `web_gateway.py` 코드 수정 확인
+- [x] 프로세스 재시작 확인 (`ps aux` -> Running)
+- [ ] 브라우저에서 `Ctrl+F5` (강제 새로고침) 후 minmax 동작 확인 필요
+
+
+
+## 📋 8. 작업지시 (User Instruction)
+1. motorx_all.html 
+2. 상단 타이틀에 Kohzu Motor Control (v1.2 Patched) 문구가 보이는지 확인
+3. 보인다면 minmax가 정상적으로 적용되었는지 확인 (모든 카드 너비가 350px~400px로 고정되어야 함)
+4. 안 보인다면 브라우저 캐시 문제이므로 시크릿 모드(Incognito)에서 접속 시도
+
+### ✅ 8.1 Todo List (AI Analysis)
+- [x] **Step 1: Versioning** - HTML 파일 헤더에 `(v1.2 Patched)` 문구 추가하여 육안으로 버전 확인 가능하도록 조치
+- [x] **Step 2: Server Verification** - `web_gateway.py`가 캐시 방지 헤더(`Cache-Control: no-store`)를 전송하도록 수정 완료
+- [x] **Step 3: Client Action Guide** - 사용자에게 버전 확인 및 캐시 삭제(강제 새로고침) 절차 안내
+
+### 📝 8.2 Result (Cache Busting Verification)
+*사용자가 현재 보고 있는 화면이 최신 버전인지 즉시 확인할 수 있는 식별자를 추가하였습니다.*
+
+### 🛠 8.3 변경 사항 (Summary of Changes)
+- **수정 위치:** `motorx_all.html` (Header Section)
+- **주요 내용:**
+  - `<h1>` 태그 내에 `<span class="text-xs ...">(v1.2 Patched)</span>` 추가
+  - 이를 통해 브라우저가 예전 HTML을 캐싱하고 있는지 여부를 판별함
+
+### 🔍 검증 결과 (Validation)
+- [x] HTML 코드 내 버전 텍스트 추가 확인
+- [ ] 사용자 브라우저 화면에서 `(v1.2 Patched)` 표시 여부 확인 필요

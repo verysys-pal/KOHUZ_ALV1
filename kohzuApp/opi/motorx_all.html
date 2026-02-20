@@ -27,6 +27,13 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
+        /* Enforce Width Constraints */
+        .card-responsive {
+            width: 100%;
+            min-width: 350px;
+            max-width: 400px;
+        }
+
         .card-header {
             padding: 1rem;
             border-bottom: 1px solid #334155;
@@ -162,7 +169,8 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-white tracking-tight">Kohzu Motor Control</h1>
+                    <h1 class="text-xl font-bold text-white tracking-tight">Kohzu Motor Control <span
+                            class="text-xs text-slate-500 font-normal ml-2">(v1.2 Patched)</span></h1>
                     <div class="flex items-center gap-2 text-sm text-slate-400">
                         <span>PV:</span>
                         <span id="prefix-display" class="pv-font text-blue-400 font-semibold">LOADING...</span>
@@ -196,7 +204,7 @@
         <div class="xl:col-span-2 space-y-6">
 
             <!-- Drive Card -->
-            <div class="card relative overflow-hidden w-full min-w-[350px] max-w-[400px]">
+            <div class="card card-responsive relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -332,7 +340,7 @@
             </div>
 
             <!-- Status Card -->
-            <div class="card w-full min-w-[350px] max-w-[400px]">
+            <div class="card card-responsive">
                 <div class="card-header">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -400,7 +408,7 @@
         <!-- Column 2: Parameters -->
         <div class="xl:col-span-1 space-y-6">
             <!-- Dynamics -->
-            <div class="card">
+            <div class="card card-responsive">
                 <div class="card-header">
                     <span class="card-title text-sm">Dynamics</span>
                 </div>
@@ -456,7 +464,7 @@
             </div>
 
             <!-- Soft Limits -->
-            <div class="card">
+            <div class="card card-responsive">
                 <div class="card-header">
                     <span class="card-title text-sm">Soft Limits</span>
                 </div>
@@ -488,7 +496,7 @@
         <!-- Column 3: Advanced/Setup -->
         <div class="xl:col-span-1 space-y-6">
             <!-- Calibration & Homing -->
-            <div class="card">
+            <div class="card card-responsive">
                 <div class="card-header">
                     <span class="card-title text-sm">Calibration / Homing</span>
                 </div>
@@ -530,7 +538,7 @@
             </div>
 
             <!-- Resolution -->
-            <div class="card">
+            <div class="card card-responsive">
                 <div class="card-header">
                     <span class="card-title text-sm">Resolution</span>
                 </div>
@@ -571,7 +579,7 @@
             </div>
 
             <!-- PID -->
-            <div class="card">
+            <div class="card card-responsive">
                 <div class="card-header">
                     <span class="card-title text-sm">PID Coefficients</span>
                 </div>
@@ -597,10 +605,17 @@
 
     <script>
         // --- Core Logic ---
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Dynamic WebSocket Host/Port
+        // Priority: 1. URL param (?ws_host=...) 2. Current Hostname (if served via HTTP) 3. Localhost fallback
+        const wsHost = urlParams.get('ws_host') || window.location.hostname || 'localhost';
+        const wsPort = urlParams.get('ws_port') || (window.location.port ? window.location.port : '8888');
+
         const config = {
-            prefix: new URLSearchParams(window.location.search).get('P') || 'KOHZU:',
-            motor: new URLSearchParams(window.location.search).get('M') || 'm1',
-            wsUrl: 'ws://localhost:8888/ws'
+            prefix: urlParams.get('P') || 'KOHZU:',
+            motor: urlParams.get('M') || 'm1',
+            wsUrl: `ws://${wsHost}:${wsPort}/ws`
         };
 
         // UI Update
