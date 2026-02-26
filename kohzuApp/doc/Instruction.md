@@ -430,3 +430,62 @@ function openDetailModal(axisIndex) {
 ### 🔍 검증 결과 (Validation)
 - [x] 설계된 OPI(.bob 파일) 레이아웃의 데이터가 유실 없이 메인 웹페이지 카드 위젯으로 1:1 변환되었는지 검증 및 완료.
 - [x] 복합 입력 컨트롤 상태에서 HTML 부모-자식 태그 간 이벤트 버블링(Bubbling) 간섭 방지 기능 동작 확인 완료.
+
+
+
+
+
+
+---
+## 📋 9. 작업지시 (User Instruction)
+1. 웹사용 가이드 docs 폴더에 작성
+  - Linux 재접속시 IP 할당 : root 실행 = sudo su - 
+    sudo ip link set enp3s0 up     # enp3s0 인터페이스 활성화 
+    sudo ifconfig enp3s0 192.168.1.100 netmask 255.255.255.0 up    #IP 할당
+    ifconfig
+    ping 192.168.1.120
+  - EPICS IOC 실행
+    cd \${EPICS_PATH}/siteApp/KOHUZ_ALV1/iocBoot/iocKOHUZ_ALV1
+    ./st.cmd | tee "Log_stCmd.log"
+  - 구동 및 상태 (Drive & Status):거리, 속도, 현재위치
+    "caget KOHZU:m1.DESC"
+    "caput KOHZU:m1.RLV -10"
+    "caput KOHZU:m1.RLV 10"
+    "caput KOHZU:m1.VELO 2.0        # 속도설정 max 4.0 mm/s"    
+    "caget KOHZU:m1.RBV             # 현재위치"
+    "caget KOHZU:m1.DMOV            # 이동 완료 여부 (1: 완료, 0: 이동 중)"
+    "caput KOHZU:m1.STOP            # STOP"   
+    "caget KOHZU:m1.SPMG            # 동작 모드 제어 (Go:이동가능,Stop:이동불가)"    
+  - EPICS Web Gateway 
+    "cd \${EPICS_PATH}/siteApp/KOHUZ_ALV1/kohzuApp/opi"
+    "pkill -f web_gateway.py"
+    "python3 web_gateway.py         # Python Gateway 실행"    
+  - 방화벽 포트 개방
+    "hostname -I"
+    "sudo ufw allow 8888/tcp"
+    "sudo ufw reload"
+    "http://[IP_ADDRESS]/dashboard.html"
+
+### ✅ 9.1 Todo List (AI Analysis)
+- [x] **Step 1: Create Web Usage Guide** - 요청된 명령어 목록(네트워크 설정, IOC 실행, caget/caput 단위 테스트, 웹 게이트웨이 런칭, 방화벽 개방)을 논리적인 순서로 체계적으로 분류 및 정리하여 마크다운 포맷으로 가이드 작성.
+- [x] **Step 2: Save to DOCS** - `kohzuApp/doc` 경로에 `Web_Usage_Guide.md` 신규 파일 생성 및 내용 기록.
+- [x] **Step 3: Verification** - 가이드 내용이 정확하고 사용자가 실제 리눅스 터미널에서 복사/붙여넣기 하기 쉽게 문단 및 코드 스니펫이 정상적으로 포메팅되었는지 검토.
+
+### 📝 9.2 Result (Execution Summary)
+- 사용자가 서버 재구동 또는 오프라인 발생 시나 리눅스 셋업 과정에서 단계별로 하나씩 조치하여 최종적으로 웹 대시보드 화면까지 원활하게 진입할 수 있는 표준 **"웹사용 가이드(`Web_Usage_Guide.md`)"** 문서 체계를 신규 구축했습니다.
+- 작성된 가이드는 사용자의 명령 지시를 바탕으로 크게 5개 파트로 구성하였으며, 목적별로 명확하게 구조를 나누었습니다:
+  1. Linux 이더넷 인터페이스 단의 고정 IP 할당(root 권한) 및 컨트롤러 통신 테스트
+  2. 하드웨어를 소프트웨어에 바인딩하는 EPICS IOC 로컬 실행 절차
+  3. 커맨드라인에서 통신을 보장하기 위한 caget / caput 단위 명령 모음 (Drive & Status 점검)
+  4. 웹 브라우저 단과 EPICS 통신을 이어주는 Python Web Gateway 데몬 초기화
+  5. 외부 접속을 위한 방화벽 허용(8888 포트) 및 웹 브라우저 최종 접속 주소 도출
+- 리눅스 터미널 환경에서 즉각 복사해서 실행할 수 있는 Markdown 형태의 ````bash ... ```` 코드 블록으로 문서를 최적화 구성하여 가독성을 극대화했습니다. 
+
+### 🛠 9.3 변경 사항 (Summary of Changes)
+- **신규 파일 생성:** `kohzuApp/doc/Web_Usage_Guide.md`
+- **주요 로직:** 사용자가 남겨둔 `caput / caget` 등의 커맨드라인 인자들을 실사용 가능하도록 터미널 주석과 함께 상세 설명.
+- **적용:** 생성 완료 확인.
+
+### 🔍 검증 결과 (Validation)
+- [x] `doc` 폴더 내에 마크다운(`Web_Usage_Guide.md`) 문서 신규 생성 및 저장 완료.
+- [x] 사용자가 제공한 모든 터미널 커맨드 조각들과 부가 설명들이 유실 없이 신규 기술 가이드에 완벽하게 포함되었는지 교차 검증 및 완료.
