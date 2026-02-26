@@ -24,9 +24,8 @@ asynOctetSetOutputEos("L0", 0, "\r\n")
 asynSetTraceIOMask("L0", 0, 0x2)
 asynSetTraceMask("L0", 0, 0x1) # Error(0x1) only to avoid noise
 
-# 4. Controller 생성
-# MovingPoll을 0.1s로 설정했으므로 통신 부하가 발생할 수 있습니다. 
-# 통신이 불안정하면 0.2~0.5 정도로 조절하십시오.
-KohzuAriesCreateController("PC0", "L0", 2, 0.2, 1.0)
+# 4. Controller 생성 (6개 축 제어 환경으로 확장)
+# movingPollPeriod 0.2s, idlePollPeriod 1.0s
+KohzuAriesCreateController("PC0", "L0", 6, 0.2, 1.0)
 
 iocInit()

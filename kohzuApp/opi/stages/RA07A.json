@@ -1,15 +1,36 @@
 {
     "stageModel": "RA07A-W02",
     "axisType": "Rotation",
+    "specifications": {
+        "tableSize": "Φ68mm",
+        "guideMechanism": "Angular Bearing",
+        "leadMechanism": "Worm & Worm Wheel 1/90",
+        "angularRange": "±135 deg",
+        "maxSpeed": "20 deg/sec",
+        "loadCapacity": "58.8N (6kgf)",
+        "motor": "PK544PMB (5 Phase Stepper)",
+        "sensor": "F-101 (HOME, LIMIT)",
+        "weight": "1.2kg"
+    },
+    "driverSettings": {
+        "driverModel": "TITAN-A2",
+        "runCurrent": "0.75 A/phase",
+        "stopCurrent": "50~60% of RUN",
+        "cdSwitch_DIP3": "OFF (Current Down Enable)",
+        "ckSwitch_DIP2": "OFF (2-Pulse Mode: CW/CCW)"
+    },
     "parameters": {
+        "EGU": "deg",
         "UREV": 4.0,
         "SREV": 2000,
-        "EGU": "deg",
         "MRES": 0.002,
         "VELO": 5.0,
         "VMAX": 20.0,
         "HLM": 130.0,
         "LLM": -130.0,
-        "PREC": 3
+        "DHLM": 135.0,
+        "DLLM": -135.0,
+        "PREC": 3,
+        "UEIP": "No"
     }
 }

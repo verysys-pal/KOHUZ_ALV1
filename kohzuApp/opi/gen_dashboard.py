@@ -2,14 +2,17 @@ import re
 
 def generate_dashboard():
     with open('motorx_all.html', 'r', encoding='utf-8') as f:
-        html = f.read()
+        m_html = f.read()
+    with open('motor_popup.html', 'r', encoding='utf-8') as f:
+        p_html = f.read()
 
-    # Extract styles
-    styles = re.search(r'<style>(.*?)</style>', html, re.DOTALL).group(1)
+    # Extract styles from motorx_all.html
+    style_match = re.search(r'<style>(.*?)</style>', m_html, re.DOTALL)
+    styles = style_match.group(1) if style_match else ""
     
     # Extract the <main> block for the modal content
-    main_match = re.search(r'<main[^>]*>(.*?)</main>', html, re.DOTALL)
-    modal_content = main_match.group(1)
+    main_match = re.search(r'<main[^>]*>(.*?)</main>', p_html, re.DOTALL)
+    modal_content = main_match.group(1) if main_match else ""
 
     # Replace $(P)$(M) with data-suffix logic or just keep $(P)$(M) and let JS replace it dynamically
     # For a modal that changes context, it's easier to use a placeholder like {PREFIX}
@@ -53,6 +56,29 @@ def generate_dashboard():
         .modal-overlay {{
             background-color: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(4px);
+        }}
+        .disconnected-card {{
+            opacity: 0.6;
+            filter: grayscale(1);
+            position: relative;
+        }}
+        .disconnected-card::after {{
+            content: "DISCONNECTED";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: rgba(239, 68, 68, 0.4);
+            border: 4px solid rgba(239, 68, 68, 0.3);
+            padding: 0.5rem 1rem;
+            pointer-events: none;
+            z-index: 10;
+            letter-spacing: 0.1em;
+        }}
+        .disconnected-card .card-body {{
+            pointer-events: none;
         }}
     </style>
 </head>
@@ -111,7 +137,7 @@ def generate_dashboard():
             </div>
             
             <!-- Modal Body ( motorx_all.html main content ) -->
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto" style="max-height: calc(100vh - 150px);">
+            <div class="p-6 grid grid-cols-1 lg:grid-cols-5 gap-6 overflow-y-auto" style="max-height: calc(100vh - 150px);">
                 {modal_content}
             </div>
         </div>
@@ -143,7 +169,7 @@ def generate_dashboard():
                     : `<span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-500 border border-slate-700">No Config</span>`;
 
                 const cardHtml = `
-                <div class="card axis-card flex flex-col justify-between" onclick="openModal(${{idx}})">
+                <div class="card axis-card flex flex-col justify-between" id="axis-card-${{idx}}" onclick="openModal(${{idx}})">
                     <div class="card-header justify-between cursor-pointer" onclick="openModal(${{idx}}); event.stopPropagation();">
                         <div class="flex items-center gap-2">
                             <span class="card-title">Motor ${{idx + 1}}</span>
@@ -229,12 +255,14 @@ def generate_dashboard():
                         <div class="flex justify-between items-center mt-1 pt-1 border-t border-slate-700/50">
                             <div class="flex items-center gap-1.5">
                                 <span class="truncate text-[9px] text-slate-600 bg-black px-1 rounded border border-slate-800" data-pv="${{pvPrefix}}.DTYP" title="DTYP">Type</span>
-                                <span class="truncate text-[9px] text-slate-600 bg-black px-1 rounded border border-slate-800 flex gap-1 items-center">
-                                    STAT <div class="w-1.5 h-1.5 rounded-full" data-led-pv="${{pvPrefix}}.STAT" data-led-on="0" data-led-color="on" title="STAT == 0 (OK)"></div>
-                                </span>
+                                <div id="axis-movn-status-${{idx}}" class="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-500 border border-slate-700">IDLE</div>
+                                <!-- Hidden subscription for MOVN -->
+                                <span data-pv="${{pvPrefix}}.MOVN" class="hidden"></span>
                             </div>
                             <button onclick="app.write('${{pvPrefix}}.STOP', 1); event.stopPropagation();" class="btn btn-danger py-1 px-4 text-[10px] shadow-lg shadow-red-900/20 border border-red-500 font-bold tracking-wider rounded">STOP</button>
                         </div>
+                        <!-- Hidden MSTA for hardware health monitoring -->
+                        <div class="hidden" data-pv="${{pvPrefix}}.MSTA"></div>
                     </div>
                 </div>
                 `;
@@ -277,6 +305,10 @@ def generate_dashboard():
                     if(p.VMAX !== undefined) app.write(`${{pvPrefix}}.VMAX`, p.VMAX);
                     if(p.HLM !== undefined) app.write(`${{pvPrefix}}.HLM`, p.HLM);
                     if(p.LLM !== undefined) app.write(`${{pvPrefix}}.LLM`, p.LLM);
+                    if(p.DHLM !== undefined) app.write(`${{pvPrefix}}.DHLM`, p.DHLM);
+                    if(p.DLLM !== undefined) app.write(`${{pvPrefix}}.DLLM`, p.DLLM);
+                    if(p.JVEL !== undefined) app.write(`${{pvPrefix}}.JVEL`, p.JVEL);
+                    if(p.JAR !== undefined) app.write(`${{pvPrefix}}.JAR`, p.JAR);
                     if(p.PREC !== undefined) app.write(`${{pvPrefix}}.PREC`, p.PREC);
                     
                     // Also EGU, if string
@@ -321,6 +353,35 @@ def generate_dashboard():
             modal.querySelectorAll('[data-tpl-tooltip-pv]').forEach(el => {{
                 el.setAttribute('data-tooltip-pv', pvPrefix + el.getAttribute('data-tpl-tooltip-pv'));
             }});
+
+            // Render Specs and Driver Settings if present in config
+            const specsList = document.getElementById('modal-specs-list');
+            const driverList = document.getElementById('modal-driver-list');
+            const stageBadge = document.getElementById('modal-stage-badge');
+            
+            if (axesConfig[idx]) {{
+                stageBadge.innerText = axesConfig[idx].stageModel || "Unknown";
+                
+                if (axesConfig[idx].specifications) {{
+                    specsList.innerHTML = Object.entries(axesConfig[idx].specifications)
+                        .map(([k, v]) => `<div class="flex justify-between border-b border-slate-700/50 pb-1.5"><span class="text-slate-500 font-bold tracking-tight">${{k}}</span><span class="text-slate-200 text-right font-semibold">${{v}}</span></div>`)
+                        .join('');
+                }} else {{
+                    specsList.innerHTML = '<div class="text-slate-600 italic text-center py-4">No specifications found</div>';
+                }}
+                
+                if (axesConfig[idx].driverSettings) {{
+                    driverList.innerHTML = Object.entries(axesConfig[idx].driverSettings)
+                        .map(([k, v]) => `<div class="flex justify-between border-b border-slate-700/50 pb-1.5"><span class="text-slate-500 font-bold tracking-tight">${{k}}</span><span class="text-slate-300 text-right font-mono">${{v}}</span></div>`)
+                        .join('');
+                }} else {{
+                    driverList.innerHTML = '<div class="text-slate-600 text-center py-2">No driver settings</div>';
+                }}
+            }} else {{
+                stageBadge.innerText = "No Stage Selected";
+                specsList.innerHTML = '<div class="text-slate-600 italic text-center py-8">Please upload a JSON configuration file to view specifications.</div>';
+                driverList.innerHTML = '';
+            }}
 
             modal.classList.remove('hidden');
             
@@ -440,13 +501,54 @@ def generate_dashboard():
                         const axisIdx = parseInt(match[1]) - 1;
                         const indicator = document.getElementById(`axis-conn-${{axisIdx}}`);
                         if(indicator) {{
+                            const card = document.getElementById(`axis-card-${{axisIdx}}`);
                             if(data.connected) {{
+                                // Initial connection - we don't know MSTA yet, so default to green if not grayed out
+                                // But better to wait for MSTA update
                                 indicator.className = "w-2 h-2 rounded-full bg-green-500 ml-auto shadow-[0_0_8px_#22c55e]";
-                                indicator.title = "Connected";
+                                indicator.title = "IOC Connected (Waiting for MSTA)";
                             }} else {{
                                 indicator.className = "w-2 h-2 rounded-full bg-slate-600 ml-auto shadow-sm";
-                                indicator.title = "Disconnected";
+                                indicator.title = "IOC Disconnected";
+                                if(card) card.classList.add('disconnected-card');
                             }}
+                        }}
+                    }}
+                    return;
+                }}
+
+                if (data.type === 'update' && data.pv.endsWith('.MSTA')) {{
+                    const match = data.pv.match(/KOHZU:m(\d+)/);
+                    if(match) {{
+                        const axisIdx = parseInt(match[1]) - 1;
+                        const card = document.getElementById(`axis-card-${{axisIdx}}`);
+                        const indicator = document.getElementById(`axis-conn-${{axisIdx}}`);
+                        const isProblem = (data.value & 512) !== 0; // Bit 9: RA_PROBLEM
+                        
+                        if (isProblem) {{
+                            if(card) card.classList.add('disconnected-card');
+                            if(indicator) {{
+                                indicator.className = "w-2 h-2 rounded-full bg-red-500 ml-auto shadow-[0_0_8px_#ef4444]";
+                                indicator.title = "Hardware Problem / Not Connected";
+                            }}
+                        }} else {{
+                            if(card) card.classList.remove('disconnected-card');
+                            if(indicator) {{
+                                indicator.className = "w-2 h-2 rounded-full bg-green-500 ml-auto shadow-[0_0_8px_#22c55e]";
+                                indicator.title = "Connected";
+                            }}
+                        }}
+
+                        // Update MSTA bit LEDs in modal if open
+                        if (currentModalAxis === axisIdx) {{
+                            document.querySelectorAll('[data-msta-bit]').forEach(el => {{
+                                const bit = parseInt(el.getAttribute('data-msta-bit'));
+                                if ((data.value & (1 << bit)) !== 0) {{
+                                    el.classList.add('on');
+                                }} else {{
+                                    el.classList.remove('on');
+                                }}
+                            }});
                         }}
                     }}
                     return;
@@ -480,13 +582,32 @@ def generate_dashboard():
 
                 // Check for dynamic overlay updates from Motor X
                 if (data.pv.endsWith('.MOVN')) {{
-                    // Update main dashboard status instead? Or popup modal.
-                    // Actually, if we're in popup, let's target by id or inside modal
-                    const ovs = document.querySelectorAll(`[data-actual-pv="${{data.pv}}"]`);
-                    // Too complex to rewrite id='moving-overlay' logic. 
-                    // To keep it simple, find close elements if needed, but since we copied HTML, ids are duplicated.
-                    // I will just ignore the dynamic color change background for MOVN in the interest of brevity,
-                    // or do a generic class approach.
+                    const match = data.pv.match(/KOHZU:m(\d+)/);
+                    if (match) {{
+                        const axisIdx = parseInt(match[1]) - 1;
+                        
+                        // Update on main dashboard card
+                        const cardMovn = document.getElementById(`axis-movn-status-${{axisIdx}}`);
+                        if (cardMovn) {{
+                            cardMovn.innerText = data.value ? "MOVING" : "IDLE";
+                            cardMovn.className = data.value 
+                                ? "px-2 py-0.5 rounded text-[9px] font-bold bg-blue-600 text-white animate-pulse" 
+                                : "px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-500 border border-slate-700";
+                        }}
+
+                        // Update in modal if open for this axis
+                        if (currentModalAxis === axisIdx) {{
+                            const overlay = document.getElementById('moving-overlay');
+                            const statusDiv = document.getElementById('status-movn');
+                            if (overlay) overlay.style.opacity = data.value ? "1" : "0";
+                            if (statusDiv) {{
+                                statusDiv.innerText = data.value ? "MOVING" : "IDLE";
+                                statusDiv.className = data.value 
+                                    ? "px-3 py-1 rounded text-xs font-bold bg-blue-600 text-white animate-pulse" 
+                                    : "px-3 py-1 rounded text-xs font-bold bg-slate-700 text-slate-400";
+                            }}
+                        }}
+                    }}
                 }}
             }}
 

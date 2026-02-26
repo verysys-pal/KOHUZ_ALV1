@@ -1,15 +1,36 @@
 {
   "stageModel": "XA07A-L202",
   "axisType": "Linear",
+  "specifications": {
+    "tableSize": "70mm × 70mm",
+    "guideMechanism": "Linear Guide",
+    "leadMechanism": "Ball Screw, Lead 1.0mm",
+    "motionRange": "±35mm",
+    "maxSpeed": "5mm/sec",
+    "loadCapacity": "68.6N (7kgf)",
+    "motor": "PK523HPMB (5 Phase Stepper)",
+    "sensor": "F-107 (LIMIT), F-108 (HOME)",
+    "weight": "1.15kg"
+  },
+  "driverSettings": {
+    "driverModel": "TITAN-A2",
+    "runCurrent": "0.75 A/phase",
+    "stopCurrent": "50~60% of RUN",
+    "cdSwitch_DIP3": "OFF (Current Down Enable)",
+    "ckSwitch_DIP2": "OFF (2-Pulse Mode: CW/CCW)"
+  },
   "parameters": {
+    "EGU": "mm",
     "UREV": 1.0,
     "SREV": 2000,
-    "EGU": "mm",
     "MRES": 0.0005,
     "VELO": 2.0,
     "VMAX": 5.0,
     "HLM": 34.0,
     "LLM": -34.0,
-    "PREC": 4
+    "DHLM": 35.0,
+    "DLLM": -35.0,
+    "PREC": 4,
+    "UEIP": "No"
   }
 }

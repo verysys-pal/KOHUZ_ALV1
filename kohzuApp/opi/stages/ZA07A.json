@@ -1,15 +1,36 @@
 {
     "stageModel": "ZA07A-V1F01",
     "axisType": "Vertical",
+    "specifications": {
+        "tableSize": "70mm × 70mm",
+        "guideMechanism": "Tetrahedral Flat Roller",
+        "leadMechanism": "Ground Screw, Lead 0.5mm, 1/2 belt drive",
+        "motionRange": "±10mm",
+        "maxSpeed": "2.5 mm/sec",
+        "loadCapacity": "117.6N (12kgf)",
+        "motor": "C090P-9015P (5 Phase Stepper)",
+        "sensor": "F-115 (HOME, LIMIT)",
+        "weight": "1.8kg"
+    },
+    "driverSettings": {
+        "driverModel": "TITAN-A2",
+        "runCurrent": "0.75 A/phase",
+        "stopCurrent": "50~60% of RUN",
+        "cdSwitch_DIP3": "OFF (Current Down Enable)",
+        "ckSwitch_DIP2": "OFF (2-Pulse Mode: CW/CCW)"
+    },
     "parameters": {
+        "EGU": "mm",
         "UREV": 0.25,
         "SREV": 1000,
-        "EGU": "mm",
         "MRES": 0.00025,
         "VELO": 1.0,
         "VMAX": 2.5,
         "HLM": 9.5,
         "LLM": -9.5,
-        "PREC": 4
+        "DHLM": 10.0,
+        "DLLM": -10.0,
+        "PREC": 4,
+        "UEIP": "No"
     }
 }
