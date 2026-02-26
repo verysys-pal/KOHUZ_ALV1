@@ -1,0 +1,15 @@
+{
+    "stageModel": "ZA07A-V1F01",
+    "axisType": "Vertical",
+    "parameters": {
+        "UREV": 0.25,
+        "SREV": 1000,
+        "EGU": "mm",
+        "MRES": 0.00025,
+        "VELO": 1.0,
+        "VMAX": 2.5,
+        "HLM": 9.5,
+        "LLM": -9.5,
+        "PREC": 4
+    }
+}

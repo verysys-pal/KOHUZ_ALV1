@@ -1,0 +1,15 @@
+{
+  "stageModel": "XA07A-L202",
+  "axisType": "Linear",
+  "parameters": {
+    "UREV": 1.0,
+    "SREV": 2000,
+    "EGU": "mm",
+    "MRES": 0.0005,
+    "VELO": 2.0,
+    "VMAX": 5.0,
+    "HLM": 34.0,
+    "LLM": -34.0,
+    "PREC": 4
+  }
+}

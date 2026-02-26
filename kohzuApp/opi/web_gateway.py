@@ -32,6 +32,15 @@ def global_pv_callback(pvname=None, value=None, char_value=None, **kwargs):
         if main_loop:
             main_loop.add_callback(broadcast_update, json.dumps(msg_data))
 
+def global_conn_callback(pvname=None, conn=None, **kwargs):
+    """
+    Callback from PyEPICS thread for PV connection status.
+    """
+    if pvname is not None and conn is not None:
+        msg_data = {"type": "connection", "pv": pvname, "connected": conn}
+        if main_loop:
+            main_loop.add_callback(broadcast_update, json.dumps(msg_data))
+
 def broadcast_update(message):
     """
     Executed on main thread. Sends message to all connected clients.
@@ -79,12 +88,20 @@ class EPICSWebSocket(tornado.websocket.WebSocketHandler):
     def monitor_pv(self, pv_name):
         if pv_name not in active_pvs:
             print(f"Monitoring PV: {pv_name}")
-            # Create PV with global callback
-            p = epics.PV(pv_name, callback=global_pv_callback)
+            # Create PV with global callback and low timeout to prevent Tornado blocking on missing PVs
+            p = epics.PV(pv_name, callback=global_pv_callback, connection_callback=global_conn_callback, connection_timeout=0.01)
             active_pvs[pv_name] = p
         else:
             # Send current value immediately if available
             p = active_pvs[pv_name]
+            
+            # Send connection state first
+            self.write_message(json.dumps({
+                "type": "connection",
+                "pv": pv_name,
+                "connected": p.connected
+            }))
+            
             if p.connected:
                  self.write_message(json.dumps({
                      "type": "update", 
@@ -115,8 +132,8 @@ if __name__ == "__main__":
         print(f"EPICS Web Gateway listening on http://0.0.0.0:{port}/")
     except OSError:
         port = 9999
-        app.listen(port)
-        print(f"EPICS Web Gateway listening on ws://localhost:{port}/ws")
+        app.listen(port, address="0.0.0.0")
+        print(f"EPICS Web Gateway listening on http://0.0.0.0:{port}/")
         
     main_loop = tornado.ioloop.IOLoop.current()
     try:

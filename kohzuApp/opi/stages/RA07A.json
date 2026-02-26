@@ -1,0 +1,15 @@
+{
+    "stageModel": "RA07A-W02",
+    "axisType": "Rotation",
+    "parameters": {
+        "UREV": 4.0,
+        "SREV": 2000,
+        "EGU": "deg",
+        "MRES": 0.002,
+        "VELO": 5.0,
+        "VMAX": 20.0,
+        "HLM": 130.0,
+        "LLM": -130.0,
+        "PREC": 3
+    }
+}

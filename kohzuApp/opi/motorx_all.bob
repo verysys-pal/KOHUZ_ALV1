@@ -5130,6 +5130,11 @@ $(pv_value)</tooltip>
         <target>tab</target>
       </action>
       <action type="open_display">
+        <description>$(M) (Medium2)</description>
+        <file>motorx_more_v2.opi</file>
+        <target>tab</target>
+      </action>
+      <action type="open_display">
         <description>$(M) (Setup)</description>
         <file>motorx_setup.opi</file>
         <target>tab</target>
