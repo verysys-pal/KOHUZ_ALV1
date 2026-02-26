@@ -1,0 +1,59 @@
+# ================================================================
+# Kohzu ARIES 원점 복귀 방법 선택 레코드
+# ================================================================
+# 사용자가 원점 복귀(Homing) 방법을 선택하는 PV
+#
+# 사용 방법:
+#   caput $(P)$(M):HomingMethod "NORG"    → Method 4 (기본)
+#   caput $(P)$(M):HomingMethod "CW_LIM"  → Method 7
+#   caput $(P)$(M):HomingMethod "CCW_LIM" → Method 8
+#
+# 매크로:
+#   P    = PV 접두어 (예: KOHZU:)
+#   M    = 모터 이름 (예: m1)
+#   PORT = asyn 포트명 (예: PC0)
+#   ADDR = 축 번호 (0부터 시작)
+# ================================================================
+
+# 원점 복귀 방법 설정 (출력)
+record(mbbo, "$(P)$(M):HomingMethod") {
+    field(DESC, "Homing Method Select")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR))KOHZU_HOMING_METHOD")
+    field(PINI, "YES")
+
+    # Method 4: NORG 센서 에지 (Kohzu 표준)
+    field(ZRST, "NORG")
+    field(ZRVL, "4")
+
+    # Method 7: CW Limit 에지
+    field(ONST, "CW_LIM")
+    field(ONVL, "7")
+
+    # Method 8: CCW Limit 에지
+    field(TWST, "CCW_LIM")
+    field(TWVL, "8")
+
+    # 기본값: NORG (index 0 → value 4)
+    field(VAL,  "0")
+}
+
+# 원점 복귀 방법 읽기 (입력)
+record(mbbi, "$(P)$(M):HomingMethod_RBV") {
+    field(DESC, "Homing Method Readback")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR))KOHZU_HOMING_METHOD")
+    field(SCAN, "I/O Intr")
+
+    # Method 4: NORG 센서 에지 (Kohzu 표준)
+    field(ZRST, "NORG")
+    field(ZRVL, "4")
+
+    # Method 7: CW Limit 에지
+    field(ONST, "CW_LIM")
+    field(ONVL, "7")
+
+    # Method 8: CCW Limit 에지
+    field(TWST, "CCW_LIM")
+    field(TWVL, "8")
+}
