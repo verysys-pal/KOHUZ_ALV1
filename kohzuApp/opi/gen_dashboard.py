@@ -144,7 +144,7 @@ def generate_dashboard():
     </div>
 
     <!-- Hidden element for tailwind parser -->
-    <div class="hidden bg-green-600 text-white border-green-600 bg-red-900/50 text-red-300 border-red-800 bg-green-900/50 text-green-300 border-green-800"></div>
+    <div class="hidden bg-green-600 text-white border-green-600 border-green-500 bg-red-900/50 text-red-300 border-red-800 bg-green-900/50 text-green-300 border-green-800"></div>
 
     <script>
         const wsHost = window.location.hostname || 'localhost';
@@ -565,6 +565,18 @@ def generate_dashboard():
                             el.classList.remove('on', 'warn', 'error');
                         }}
                         return;
+                    }}
+
+                    if (el.hasAttribute('data-active-val')) {{
+                        const activeVal = el.getAttribute('data-active-val');
+                        if (String(data.value) === activeVal) {{
+                            el.classList.add('!bg-green-700', '!border-green-600', '!text-white');
+                        }} else {{
+                            el.classList.remove('!bg-green-700', '!border-green-600', '!text-white');
+                        }}
+                        
+                        // 버튼 태그인 경우 텍스트(0, 1)로 덮어쓰지 않도록 종료
+                        if (el.tagName === 'BUTTON') return;
                     }}
 
                     if (el.tagName === 'INPUT') {{
