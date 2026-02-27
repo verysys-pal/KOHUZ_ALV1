@@ -209,11 +209,11 @@ def generate_dashboard():
                         <!-- Readback -->
                         <div class="grid grid-cols-[60px_1fr_1fr_30px] gap-2 items-center">
                             <div class="text-[10px] font-bold text-green-500 text-right pr-1 tracking-tight">Readback</div>
-                            <div class="bg-black border border-slate-700 rounded px-1.5 py-1 text-right flex justify-end items-center overflow-hidden">
-                                <span data-pv="${{pvPrefix}}.RBV" class="pv-font text-green-400 font-bold text-[13px] leading-none tabular-nums">0.0000</span>
+                            <div class="bg-black border border-slate-700 rounded px-1.5 py-1 text-right flex justify-end items-center h-full overflow-hidden">
+                                <span data-pv="${{pvPrefix}}.RBV" class="pv-font text-green-400 font-bold text-[13px] leading-none tabular-nums pr-1">0.0000</span>
                             </div>
-                            <div class="bg-black border border-slate-700 rounded px-1.5 py-1 text-right flex justify-end items-center overflow-hidden">
-                                <span data-pv="${{pvPrefix}}.DRBV" class="pv-font text-green-400/70 font-bold text-xs leading-none tabular-nums">0.0000</span>
+                            <div class="bg-black border border-slate-700 rounded px-1.5 py-1 text-right flex justify-end items-center h-full overflow-hidden">
+                                <span data-pv="${{pvPrefix}}.DRBV" class="pv-font text-green-400/70 font-bold text-xs leading-none tabular-nums pr-1">0.0000</span>
                             </div>
                             <div class="flex justify-center items-center">
                                 <span data-pv="${{pvPrefix}}.EGU" class="text-[9px] font-bold text-slate-500 pv-font px-0.5" title="EGU">EGU</span>

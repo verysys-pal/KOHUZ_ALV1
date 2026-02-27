@@ -178,3 +178,36 @@
 ### 🔍 검증 결과 (Validation)
 - [x] 코드 파싱 및 `gen_dashboard.py` 정상 완료 (빌드 에러 없음)
 - [ ] 브라우저 환경에서 Drive 패널 Readback 요소의 우측 정렬된 숫자들의 끝 여백이 아래위 `input` 값들과 동일한 수직선상에 오는지 여부 확인 (유저 직접 확인 필요)
+
+
+
+
+
+
+
+
+---
+## 📋 5. 작업지시 (User Instruction)
+1. dashboard.html
+2. docs/GUI_Design_Guide.md 준수해서 수정
+
+### ✅ 5.1 Todo List (AI Analysis)
+- [x] **Step 1: GUI Design Guide 요구사항 재확인** - `GUI_Design_Guide.md`의 입력 필드 너비와 패딩, 읽기 정렬 폼의 상태를 확인. Readback 모니터링 값들이 `form-input` 등과 유사한 크기와 일관된 여백을 갖도록 규격화할 필요가 있음 확인.
+- [x] **Step 2: 제너레이터 소스 수정** - 메인 대시보드 화면을 그리는 `gen_dashboard.py` 내부의 템플릿 스트링(`cardHtml`) 중 Readback 값을 그리는 `div`와 `span` 컨테이너를 타겟팅.
+- [x] **Step 3: Flex 요소 및 우측 여백 반영** - 이전에 모터 개별 팝업(`motor_popup.html`)에서 적용했던 높이 통일 클래스(`flex justify-end items-center h-full`)와, 값 텍스트가 바깥 테두리에 시각적으로 달라붙는 문제를 방지하는 여백(`pr-1`)을 동일하게 삽입하여 일관성 유지.
+- [x] **Step 4: Validation 확립** - 파이썬 스크립트 실행을 통한 `dashboard.html` 정적 파일 빌드 및 산출물 갱신 확인.
+
+### 📝 5.2 Result (Execution Summary)
+사용자의 다섯 번째 지시에 따라 전체 6축 모터 컨트롤 카드가 나열되어 있는 대시보드 화면(`dashboard.html` 원천 코드)을 대상으로 `GUI_Design_Guide.md`의 레이아웃 가이드를 준수하도록 추가 패치 작업을 수행했습니다. 
+그 결과, 앞서 적용했던 모달(`motor_popup.html`) 화면과 마찬가지로 각 모터 별 카드의 'Readback' 값 표시 항목들이 주변 `input` 입력 필드들과 정확히 동일한 상하 높이를 갖도록 설정되었으며 (`h-full`), 값들이 컴포넌트 우측 경계에 보기 싫게 밀착되는 현상을 방지하도록 여백(`pr-1`)을 일관성 있게 부여하여 대시보드 UI의 통일감과 가독성을 대폭 상향시켰습니다. 
+
+### 🛠 5.3 변경 사항 (Summary of Changes)
+- **수정 위치:** `kohzuApp/opi/gen_dashboard.py`
+    - 동적 카드(`cardHtml`) 템플릿 내, Readback과 Dial 값을 감싸는 `div`에 `flex justify-end items-center h-full` 적용
+    - 바로 하위 자식 노드인 `.RBV`, `.DRBV` 표기용 `span` 태그의 마지막 클래스 속성에 우측 정렬 여백을 주기 위한 `pr-1` 추가
+- **수정 위치:** `kohzuApp/opi/dashboard.html`
+    - 파이썬 제너레이터 구동(`# python3 gen_dashboard.py`)을 통한 전체 대시보드 DOM 요소 일괄 갱신 성공
+
+### 🔍 검증 결과 (Validation)
+- [x] 코드 파싱 및 템플릿 빌드 완료 (Exit Code 0)
+- [ ] OPI 대시보드 웹 인터페이스에서 각 카드의 "Readback" 항목(녹색 수치) 박스의 형태와 정렬이 정상적으로 표현되는지 스크린 점검 (유저 직접 확인 필요)
