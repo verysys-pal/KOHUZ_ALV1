@@ -177,24 +177,7 @@
             opacity: 1;
         }
 
-        /* Debug Overlay Mode */
-        /* Debug Overlay Mode */
-        .debug-mode [data-actual-pv]::after {
-            content: attr(data-actual-pv);
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
-            font-size: 9px;
-            padding: 1px 3px;
-            z-index: 999;
-            pointer-events: none;
-            border-radius: 2px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
 
-        /* Make sure parents have relative positioning for absolute children */
         /* Make sure parents have relative positioning for absolute children */
         [data-pv],
         [data-led-pv],
@@ -716,6 +699,7 @@
             constructor() {
                 this.ws = null;
                 this.pvs = new Set();
+                this.precisions = {};
                 this.init();
             }
 
@@ -787,13 +771,6 @@
                 // Subscribe
                 this.ws.send(JSON.stringify({ type: 'subscribe', pvs: Array.from(this.pvs) }));
 
-                // Task 20.3: Debug Overlay (Ctrl Key)
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Control') document.body.classList.add('debug-mode');
-                });
-                document.addEventListener('keyup', (e) => {
-                    if (e.key === 'Control') document.body.classList.remove('debug-mode');
-                });
             }
 
             updateStatus(connected) {
@@ -808,6 +785,11 @@
             }
 
             onMessage(data) {
+                if (data.type === 'update' && data.pv.endsWith('.PREC')) {
+                    const match = data.pv.match(/KOHZU:m(\d+)/);
+                    if (match) this.precisions[match[1]] = data.value;
+                }
+
                 if (data.type !== 'update') return;
 
                 // Update generic fields
@@ -826,7 +808,15 @@
 
                     // Handle Inputs/Text
                     if (el.tagName === 'INPUT') {
-                        if (document.activeElement !== el) el.value = data.value;
+                        if (document.activeElement !== el) {
+                            let val = data.value;
+                            if (typeof val === 'number') {
+                                const match = data.pv.match(/KOHZU:m(\d+)/);
+                                const prec = (match && this.precisions[match[1]] !== undefined) ? this.precisions[match[1]] : 4;
+                                val = parseFloat(val.toFixed(prec));
+                            }
+                            el.value = val;
+                        }
                     } else if (el.tagName === 'SELECT') {
                         el.value = data.value;
                     } else {
@@ -836,7 +826,9 @@
                         // Formatting
                         let val = data.value;
                         if (typeof val === 'number') {
-                            val = val.toFixed(4).replace(/\.?0+$/, ''); // Clean trim
+                            const match = data.pv.match(/KOHZU:m(\d+)/);
+                            const prec = (match && this.precisions[match[1]] !== undefined) ? this.precisions[match[1]] : 4;
+                            val = parseFloat(val.toFixed(prec));
                         }
                         el.innerText = val;
                     }

@@ -115,16 +115,20 @@
                                 <!-- Readback -->
                                 <div class="grid grid-cols-[80px_1fr_1fr_1fr_30px] gap-2 items-center">
                                     <span class="text-xs text-green-400 font-bold">Readback</span>
-                                    <div class="bg-black/40 border border-slate-700 rounded px-1 py-0.5 text-right">
+                                    <div
+                                        class="bg-black/40 border border-slate-700 rounded px-1 py-0.5 text-right flex justify-end items-center h-full">
                                         <span data-pv="$(P)$(M).RBV"
-                                            class="pv-font text-xs text-green-400 font-bold">0.0000</span>
+                                            class="pv-font text-xs text-green-400 font-bold pr-4">0.0000</span>
                                     </div>
-                                    <div class="bg-black/20 border border-slate-800 rounded px-1 py-0.5 text-right">
+                                    <div
+                                        class="bg-black/20 border border-slate-800 rounded px-1 py-0.5 text-right flex justify-end items-center h-full">
                                         <span data-pv="$(P)$(M).DRBV"
-                                            class="pv-font text-xs text-green-400/60">0.0000</span>
+                                            class="pv-font text-xs text-green-400/60 pr-3">0.0000</span>
                                     </div>
-                                    <div class="bg-black/20 border border-slate-800 rounded px-1 py-0.5 text-right">
-                                        <span data-pv="$(P)$(M).RRBV" class="pv-font text-xs text-green-400/40">0</span>
+                                    <div
+                                        class="bg-black/20 border border-slate-800 rounded px-1 py-0.5 text-right flex justify-end items-center h-full">
+                                        <span data-pv="$(P)$(M).RRBV"
+                                            class="pv-font text-xs text-green-400/40 pr-3">0</span>
                                     </div>
                                     <div class="flex justify-center">
                                         <div class="led w-2.5 h-2.5" data-led-pv="$(P)$(M).DMOV" data-led-color="on">
@@ -268,27 +272,27 @@
                                 </div>
                                 <div class="p-2 flex flex-col gap-1 resolution-setup-panel">
                                     <div
-                                        class="bg-slate-700/50 px-2 py-1 border-b border-slate-700 flex items-center justify-between">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Max Spd</label>
                                         <input type="number" data-pv="$(P)$(M).VMAX"
-                                            class="input-dark-tab py-0.5 text-xs text-blue-300 w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-blue-300 text-right">
                                     </div>
                                     <div
-                                        class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Speed</label>
                                         <input type="number" data-pv="$(P)$(M).VELO"
-                                            class="input-dark-tab py-0.5 text-xs text-white w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-white text-right">
                                     </div>
                                     <div
-                                        class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Base</label>
                                         <input type="number" data-pv="$(P)$(M).VBAS"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-right">
                                     </div>
-                                    <div class="flex justify-between items-center px-1 py-1">
+                                    <div class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1">
                                         <label class="text-xs text-slate-500 font-bold">Accel</label>
                                         <input type="number" data-pv="$(P)$(M).ACCL"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-right">
                                     </div>
                                 </div>
                             </div>
@@ -301,27 +305,27 @@
                                 </div>
                                 <div class="p-2 flex flex-col gap-1 resolution-setup-panel">
                                     <div
-                                        class="bg-slate-700/50 px-2 py-1 border-b border-slate-700 flex items-center justify-between">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Distance</label>
                                         <input type="number" data-pv="$(P)$(M).BDST"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right text-orange-300">
+                                            class="input-dark-tab py-0.5 text-xs text-orange-300 text-right">
                                     </div>
                                     <div
-                                        class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Speed</label>
                                         <input type="number" data-pv="$(P)$(M).BVEL"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-right">
                                     </div>
                                     <div
-                                        class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Accel</label>
                                         <input type="number" data-pv="$(P)$(M).BACC"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-right">
                                     </div>
-                                    <div class="flex justify-between items-center px-1 py-1">
+                                    <div class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1">
                                         <label class="text-xs text-slate-500 font-bold">Frac</label>
                                         <input type="number" data-pv="$(P)$(M).FRAC"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-right">
                                     </div>
                                 </div>
                             </div>
@@ -338,19 +342,20 @@
                                 </div>
                                 <div class="p-2 flex flex-col gap-1 resolution-setup-panel">
                                     <div
-                                        class="bg-slate-700/50 px-2 py-1 border-b border-slate-700 flex items-center justify-between">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Velocity</label>
                                         <input type="number" data-pv="$(P)$(M).JVEL"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-right">
                                     </div>
                                     <div
-                                        class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Accel</label>
                                         <input type="number" data-pv="$(P)$(M).JAR"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                            class="input-dark-tab py-0.5 text-xs text-right">
                                     </div>
                                     <!-- Row 3: Jog Buttons -->
-                                    <div class="grid grid-cols-2 gap-2 pt-2 mt-1">
+                                    <div
+                                        class="grid grid-cols-2 gap-2 items-center px-2 py-1 pt-2 mt-1 border-t border-slate-700/30">
                                         <button onclick="app.writePrefix('.JOGR', 1)"
                                             class="w-full text-xs font-bold py-1 px-2 rounded border border-slate-600 bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors shadow-sm uppercase">JogR</button>
                                         <button onclick="app.writePrefix('.JOGF', 1)"
@@ -367,23 +372,24 @@
                                 </div>
                                 <div class="p-2 flex flex-col gap-1 resolution-setup-panel">
                                     <div
-                                        class="bg-slate-700/50 px-2 py-1 border-b border-slate-700 flex justify-between items-center group/header">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">HVel</label>
                                         <input type="number" data-pv="$(P)$(M).HVEL"
-                                            class="input-dark-tab py-0.5 text-xs w-16 text-right text-orange-300">
+                                            class="input-dark-tab py-0.5 text-xs text-orange-300 text-right">
                                     </div>
                                     <div
-                                        class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                        class="grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30">
                                         <label class="text-xs text-slate-500 font-bold">Method</label>
                                         <select data-pv="$(P)$(M):HomingMethod"
-                                            class="bg-slate-900 border border-slate-700 rounded text-xs w-20 py-0.5 px-0.5 outline-none font-bold text-slate-400">
+                                            class="bg-slate-900 border border-slate-700 rounded text-xs w-full py-0.5 px-0.5 outline-none font-bold text-slate-400">
                                             <option value="NORG">NORG</option>
                                             <option value="CW_LIM">CW Limit</option>
                                             <option value="CCW_LIM">CCW Limit</option>
                                         </select>
                                     </div>
                                     <!-- Row 3: Homing Buttons -->
-                                    <div class="grid grid-cols-2 gap-2 pt-2 mt-1">
+                                    <div
+                                        class="grid grid-cols-2 gap-2 items-center px-2 py-1 pt-2 mt-1 border-t border-slate-700/30">
                                         <button onclick="app.writePrefix('.HOMR', 1)"
                                             class="w-full text-xs font-bold py-1 px-2 rounded border border-slate-600 bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors shadow-sm uppercase">HomR</button>
                                         <button onclick="app.writePrefix('.HOMF', 1)"

@@ -652,13 +652,6 @@ def generate_dashboard():
         const app = new EPICSController();
         renderDashboard();
 
-        // Control mode shortcut
-        document.addEventListener('keydown', (e) => {{
-            if (e.key === 'Control') document.body.classList.add('debug-mode');
-        }});
-        document.addEventListener('keyup', (e) => {{
-            if (e.key === 'Control') document.body.classList.remove('debug-mode');
-        }});
     </script>
 </body>
 </html>
