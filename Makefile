@@ -27,5 +27,6 @@ $(foreach dir, $(filter %Top, $(DIRS)), \
 iocBoot_DEPEND_DIRS += $(filter %App,$(DIRS))
 
 # Add any additional dependency rules here:
+KOHUZ_ALV1App_DEPEND_DIRS = kohzuApp
 
 include $(TOP)/configure/RULES_TOP
