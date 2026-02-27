@@ -20,10 +20,10 @@
                 border-color: #3b82f6 !important;
             }
 
-            /* 왼쪽제어카드 모터 PV 칸 크기 1/2로 축소 */
+            /* 왼쪽제어카드 모터 PV 칸 크기 80px로 통일 */
             .left-control-card .input-dark-tab,
             .left-control-card input[data-pv$=".VAL"] {
-                width: 50% !important;
+                width: 80px !important;
                 margin: 0 auto !important;
                 display: block !important;
             }
@@ -33,6 +33,14 @@
             .left-control-card input[data-pv$=".RLV"] {
                 width: 100% !important;
                 min-width: 50px;
+                margin: 0 !important;
+            }
+
+            /* Resolution & Setup 전용 입력창 너비 고정 */
+            .resolution-setup-panel .input-dark-tab,
+            .resolution-setup-panel select {
+                width: 80px !important;
+                display: inline-block !important;
                 margin: 0 !important;
             }
         </style>
@@ -49,39 +57,38 @@
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <span data-pv="$(P)$(M).DESC" class="text-sm font-bold text-white truncate block">Axis 1</span>
+                    <span data-pv="$(P)$(M).DESC" class="text-lg font-bold text-white truncate block">Axis 1</span>
                     <div class="flex items-center gap-2">
-                        <span class="text-[9px] text-slate-500 font-mono">($(P)$(M))</span>
-                        <span class="text-[9px] text-slate-500">v<span data-pv="$(P)$(M).VERS">7.0</span></span>
+                        <span class="text-xs text-slate-500 font-mono">($(P)$(M))</span>
+                        <span class="text-xs text-slate-500">v<span data-pv="$(P)$(M).VERS">7.0</span></span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-[10px] text-slate-400 font-bold">EGU:</span>
+                    <span class="text-xs text-slate-400 font-bold">EGU:</span>
                     <span data-pv="$(P)$(M).EGU"
-                        class="text-[11px] text-blue-400 font-bold bg-black/40 px-2 py-0.5 rounded border border-slate-700">mm</span>
+                        class="text-xs text-blue-400 font-bold bg-black/40 px-2 py-0.5 rounded border border-slate-700">mm</span>
                 </div>
                 <div class="flex items-center gap-2 ml-auto">
                     <button onclick="app.writePrefix('allstop.VAL', 1)"
-                        class="bg-red-900/40 hover:bg-red-800 text-red-400 border border-red-700/50 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter transition-all">
+                        class="bg-red-900/40 hover:bg-red-800 text-red-400 border border-red-700/50 px-2 py-0.5 rounded text-xs font-black uppercase tracking-tighter transition-all">
                         ALL STOP
                     </button>
                     <div id="status-movn"
-                        class="px-3 py-0.5 rounded-full text-[10px] font-black tracking-widest bg-slate-700 text-slate-400 border border-slate-600 uppercase">
+                        class="px-3 py-0.5 rounded-full text-xs font-black tracking-widest bg-slate-700 text-slate-400 border border-slate-600 uppercase">
                         IDLE</div>
                 </div>
             </div>
 
             <div class="card-body p-3 flex-1 overflow-y-auto bg-slate-800/50">
-                <div class="grid grid-cols-[1fr_200px] gap-4">
+                <div class="grid grid-cols-[1.5fr_1fr] gap-4">
                     <!-- Column 1: Main Controls -->
                     <div class="space-y-4">
                         <!-- Drive & Position -->
                         <div class="border border-slate-700 rounded overflow-hidden">
                             <div
                                 class="bg-blue-600/20 px-2 py-1 border-b border-slate-700 flex justify-between items-center group/header">
-                                <span
-                                    class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Drive</span>
-                                <div class="flex gap-4 text-[9px] font-bold text-slate-500 pr-10">
+                                <span class="text-sm font-black text-blue-400 uppercase tracking-widest">Drive</span>
+                                <div class="flex gap-4 text-xs font-bold text-slate-500 pr-10">
                                     <span class="w-[60px] text-right">User</span>
                                     <span class="w-[60px] text-right">Dial</span>
                                     <span class="w-[60px] text-right">Raw</span>
@@ -90,12 +97,12 @@
                             <div class="p-2 space-y-1.5">
                                 <!-- Hi limit -->
                                 <div class="grid grid-cols-[80px_1fr_1fr_1fr_30px] gap-2 items-center">
-                                    <span class="text-[10px] text-slate-400 font-bold">Hi limit</span>
+                                    <span class="text-xs text-slate-400 font-bold">Hi limit</span>
                                     <input type="number" data-pv="$(P)$(M).HLM"
-                                        class="input-dark-tab py-0.5 text-[11px] text-right">
+                                        class="input-dark-tab py-0.5 text-xs text-right">
                                     <input type="number" data-pv="$(P)$(M).DHLM"
-                                        class="input-dark-tab py-0.5 text-[11px] text-right text-slate-500" readonly>
-                                    <div class="text-right text-[11px] text-yellow-500/50 pr-1 font-mono">-</div>
+                                        class="input-dark-tab py-0.5 text-xs text-right text-slate-500" readonly>
+                                    <div class="text-right text-xs text-yellow-500/50 pr-1 font-mono">-</div>
                                     <div class="flex justify-center">
                                         <div class="led w-2.5 h-2.5" data-led-pv="$(P)$(M).HLS" data-led-color="error">
                                         </div>
@@ -103,18 +110,17 @@
                                 </div>
                                 <!-- Readback -->
                                 <div class="grid grid-cols-[80px_1fr_1fr_1fr_30px] gap-2 items-center">
-                                    <span class="text-[10px] text-green-400 font-bold">Readback</span>
+                                    <span class="text-xs text-green-400 font-bold">Readback</span>
                                     <div class="bg-black/40 border border-slate-700 rounded px-1 py-0.5 text-right">
                                         <span data-pv="$(P)$(M).RBV"
-                                            class="pv-font text-[12px] text-green-400 font-bold">0.0000</span>
+                                            class="pv-font text-xs text-green-400 font-bold">0.0000</span>
                                     </div>
                                     <div class="bg-black/20 border border-slate-800 rounded px-1 py-0.5 text-right">
                                         <span data-pv="$(P)$(M).DRBV"
-                                            class="pv-font text-[11px] text-green-400/60">0.0000</span>
+                                            class="pv-font text-xs text-green-400/60">0.0000</span>
                                     </div>
                                     <div class="bg-black/20 border border-slate-800 rounded px-1 py-0.5 text-right">
-                                        <span data-pv="$(P)$(M).RRBV"
-                                            class="pv-font text-[11px] text-green-400/40">0</span>
+                                        <span data-pv="$(P)$(M).RRBV" class="pv-font text-xs text-green-400/40">0</span>
                                     </div>
                                     <div class="flex justify-center">
                                         <div class="led w-2.5 h-2.5" data-led-pv="$(P)$(M).DMOV" data-led-color="on">
@@ -123,26 +129,26 @@
                                 </div>
                                 <!-- Move (VAL) -->
                                 <div class="grid grid-cols-[80px_1fr_1fr_1fr_30px] gap-2 items-center">
-                                    <span class="text-[10px] text-blue-400 font-bold">Move</span>
+                                    <span class="text-xs text-blue-400 font-bold">Move</span>
                                     <input type="number" data-pv="$(P)$(M).VAL"
-                                        class="bg-blue-900/10 border border-blue-500/30 rounded px-1 py-0.5 text-[12px] text-right text-white font-bold outline-none focus:border-blue-500 transition-colors">
+                                        class="bg-blue-900/10 border border-blue-500/30 rounded px-1 py-0.5 text-sm text-right text-white font-bold outline-none focus:border-blue-500 transition-colors">
                                     <input type="number" data-pv="$(P)$(M).DVAL"
-                                        class="input-dark-tab py-0.5 text-[11px] text-right text-blue-400/60" readonly>
+                                        class="input-dark-tab py-0.5 text-xs text-right text-blue-400/60" readonly>
                                     <input type="number" data-pv="$(P)$(M).RVAL"
-                                        class="input-dark-tab py-0.5 text-[11px] text-right text-blue-400/40" readonly>
+                                        class="input-dark-tab py-0.5 text-xs text-right text-blue-400/40" readonly>
                                     <div class="flex flex-col gap-1">
                                         <button onclick="app.writePrefix('.STOP', 1)"
-                                            class="w-full bg-red-600 hover:bg-red-500 text-[8px] font-black text-white py-1 rounded shadow-sm">STOP</button>
+                                            class="w-full bg-red-600 hover:bg-red-500 text-xs font-black text-white py-1 rounded shadow-sm">STOP</button>
                                     </div>
                                 </div>
                                 <!-- Lo limit -->
                                 <div class="grid grid-cols-[80px_1fr_1fr_1fr_30px] gap-2 items-center">
-                                    <span class="text-[10px] text-slate-400 font-bold">Lo limit</span>
+                                    <span class="text-xs text-slate-400 font-bold">Lo limit</span>
                                     <input type="number" data-pv="$(P)$(M).LLM"
-                                        class="input-dark-tab py-0.5 text-[11px] text-right">
+                                        class="input-dark-tab py-0.5 text-xs text-right">
                                     <input type="number" data-pv="$(P)$(M).DLLM"
-                                        class="input-dark-tab py-0.5 text-[11px] text-right text-slate-500" readonly>
-                                    <div class="text-right text-[11px] text-yellow-500/50 pr-1 font-mono">-</div>
+                                        class="input-dark-tab py-0.5 text-xs text-right text-slate-500" readonly>
+                                    <div class="text-right text-xs text-yellow-500/50 pr-1 font-mono">-</div>
                                     <div class="flex justify-center">
                                         <div class="led w-2.5 h-2.5" data-led-pv="$(P)$(M).LLS" data-led-color="error">
                                         </div>
@@ -151,9 +157,9 @@
                                 <!-- Relative / Tweak -->
                                 <div
                                     class="grid grid-cols-[80px_1fr_2.1fr_30px] gap-2 items-center pt-1 border-t border-slate-700/50 mt-1">
-                                    <span class="text-[10px] text-slate-400 font-bold">MoveRel</span>
+                                    <span class="text-xs text-slate-400 font-bold">MoveRel</span>
                                     <input type="number" data-pv="$(P)$(M).RLV"
-                                        class="input-dark-tab py-0.5 text-[11px] text-right text-orange-400 font-bold border-orange-900/20">
+                                        class="input-dark-tab py-0.5 text-xs text-right text-orange-400 font-bold border-orange-900/20">
                                     <div class="flex items-center gap-1">
                                         <button onclick="app.writePrefix('.JOGR', 1)"
                                             class="btn-micro flex-1">JogR</button>
@@ -166,11 +172,11 @@
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-[80px_1fr_2.1fr_30px] gap-2 items-center">
-                                    <span class="text-[10px] text-slate-400 font-bold">Tweak</span>
+                                    <span class="text-xs text-slate-400 font-bold">Tweak</span>
                                     <div class="flex items-center gap-1">
                                         <button onclick="app.writePrefix('.TWR', 1)" class="btn-micro w-8">&lt;</button>
                                         <input type="number" data-pv="$(P)$(M).TWV"
-                                            class="input-dark-tab py-0.5 text-[11px] text-center font-bold text-blue-300">
+                                            class="input-dark-tab py-0.5 text-xs text-center font-bold text-blue-300">
                                         <button onclick="app.writePrefix('.TWF', 1)" class="btn-micro w-8">&gt;</button>
                                     </div>
                                     <div class="flex items-center gap-1">
@@ -180,248 +186,197 @@
                                             class="btn-micro flex-1 py-1 text-blue-300 border-blue-900/30">HomF</button>
                                     </div>
                                     <button onclick="app.writePrefix('.SPMG', 3)"
-                                        class="bg-indigo-600 hover:bg-indigo-500 text-[8px] font-black py-1 rounded"
+                                        class="bg-indigo-600 hover:bg-indigo-500 text-xs font-black py-1 rounded"
                                         title="SPMG: Go">Go</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Calibration & Dynamics -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <!-- Calibration -->
-                            <div class="border border-slate-700 rounded overflow-hidden">
-                                <div class="bg-indigo-600/20 px-2 py-1 border-b border-slate-700">
-                                    <span
-                                        class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Calibration</span>
+                        <!-- Calibration -->
+                        <div class="border border-slate-700 rounded overflow-hidden">
+                            <div class="bg-indigo-600/20 px-2 py-1 border-b border-slate-700">
+                                <span
+                                    class="text-sm font-black text-indigo-400 uppercase tracking-widest">Calibration</span>
+                            </div>
+                            <div class="p-2 space-y-2">
+                                <div class="flex gap-1.5 p-1 bg-black/30 rounded border border-slate-700/50">
+                                    <button onclick="app.writePrefix('.SET', 0)"
+                                        class="flex-1 text-xs font-bold py-1 rounded hover:bg-slate-700 transition-colors">Use</button>
+                                    <button onclick="app.writePrefix('.SET', 1)"
+                                        class="flex-1 text-xs font-bold py-1 rounded bg-orange-600/20 text-orange-400 border border-orange-500/30">Set</button>
+                                    <span data-pv="$(P)$(M).SET" class="hidden"></span>
                                 </div>
-                                <div class="p-2 space-y-2">
-                                    <div class="flex gap-1.5 p-1 bg-black/30 rounded border border-slate-700/50">
-                                        <button onclick="app.writePrefix('.SET', 0)"
-                                            class="flex-1 text-[9px] font-bold py-1 rounded hover:bg-slate-700 transition-colors">Use</button>
-                                        <button onclick="app.writePrefix('.SET', 1)"
-                                            class="flex-1 text-[9px] font-bold py-1 rounded bg-orange-600/20 text-orange-400 border border-orange-500/30">Set</button>
-                                        <span data-pv="$(P)$(M).SET" class="hidden"></span>
+                                <div class="grid grid-cols-2 gap-2 mt-2">
+                                    <div class="space-y-1">
+                                        <span class="text-xs text-slate-500 font-bold uppercase block">Offset</span>
+                                        <input type="number" data-pv="$(P)$(M).OFF"
+                                            class="input-dark-tab py-0.5 text-xs">
                                     </div>
-                                    <div class="grid grid-cols-2 gap-2 mt-2">
-                                        <div class="space-y-1">
-                                            <span
-                                                class="text-[9px] text-slate-500 font-bold uppercase block">Offset</span>
-                                            <input type="number" data-pv="$(P)$(M).OFF"
-                                                class="input-dark-tab py-0.5 text-[10px]">
-                                        </div>
-                                        <div class="space-y-1 text-center">
-                                            <span
-                                                class="text-[9px] text-slate-500 font-bold uppercase block">Freeze</span>
-                                            <select data-pv="$(P)$(M).FOFF"
-                                                class="bg-slate-900 border border-slate-700 rounded text-[10px] w-full py-0.5 px-1 outline-none">
-                                                <option value="0">Variable</option>
-                                                <option value="1">Frozen</option>
-                                            </select>
-                                        </div>
+                                    <div class="space-y-1 text-center">
+                                        <span class="text-xs text-slate-500 font-bold uppercase block">Freeze</span>
+                                        <select data-pv="$(P)$(M).FOFF"
+                                            class="bg-slate-900 border border-slate-700 rounded text-xs w-full py-0.5 px-1 outline-none">
+                                            <option value="0">Variable</option>
+                                            <option value="1">Frozen</option>
+                                        </select>
                                     </div>
-                                    <div class="flex items-center justify-between pt-1">
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="text-[9px] text-slate-500 font-bold">Dir</span>
-                                            <select data-pv="$(P)$(M).DIR"
-                                                class="bg-slate-900 border border-slate-700 rounded text-[10px] py-0.5 px-2 font-bold text-slate-400 outline-none">
-                                                <option value="0">Pos</option>
-                                                <option value="1">Neg</option>
-                                            </select>
-                                        </div>
-                                        <button onclick="app.writePrefix('.SYNC', 1)"
-                                            class="bg-blue-600 hover:bg-blue-500 text-white text-[9px] font-bold px-4 py-1 rounded shadow-lg border border-blue-400">SYNC</button>
+                                </div>
+                                <div class="flex items-center justify-between pt-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs text-slate-500 font-bold">Dir</span>
+                                        <select data-pv="$(P)$(M).DIR"
+                                            class="bg-slate-900 border border-slate-700 rounded text-xs py-0.5 px-2 font-bold text-slate-400 outline-none">
+                                            <option value="0">Pos</option>
+                                            <option value="1">Neg</option>
+                                        </select>
                                     </div>
+                                    <button onclick="app.writePrefix('.SYNC', 1)"
+                                        class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-1 rounded shadow-lg border border-blue-400">SYNC</button>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Dynamics & Backlash -->
+                        <div class="grid grid-cols-2 gap-4">
                             <!-- Dynamics -->
                             <div class="border border-slate-700 rounded overflow-hidden">
                                 <div class="bg-blue-600/20 px-2 py-1 border-b border-slate-700">
                                     <span
-                                        class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Dynamics</span>
+                                        class="text-sm font-black text-blue-400 uppercase tracking-widest">Dynamics</span>
                                 </div>
                                 <div class="p-2 grid grid-cols-2 gap-2">
                                     <div>
-                                        <label class="text-[9px] text-slate-500 font-bold block">Max Spd</label>
+                                        <label class="text-xs text-slate-500 font-bold block">Max Spd</label>
                                         <input type="number" data-pv="$(P)$(M).VMAX"
-                                            class="input-dark-tab py-0.5 text-[10px] text-blue-300">
+                                            class="input-dark-tab py-0.5 text-xs text-blue-300">
                                     </div>
                                     <div>
-                                        <label class="text-[9px] text-slate-500 font-bold block">Speed</label>
+                                        <label class="text-xs text-slate-500 font-bold block">Speed</label>
                                         <input type="number" data-pv="$(P)$(M).VELO"
-                                            class="input-dark-tab py-0.5 text-[10px] text-white">
+                                            class="input-dark-tab py-0.5 text-xs text-white">
                                     </div>
                                     <div>
-                                        <label class="text-[9px] text-slate-500 font-bold block">Base Spd</label>
+                                        <label class="text-xs text-slate-500 font-bold block">Base Spd</label>
                                         <input type="number" data-pv="$(P)$(M).VBAS"
-                                            class="input-dark-tab py-0.5 text-[10px]">
+                                            class="input-dark-tab py-0.5 text-xs">
                                     </div>
                                     <div>
-                                        <label class="text-[9px] text-slate-500 font-bold block">Accel (sec)</label>
+                                        <label class="text-xs text-slate-500 font-bold block">Accel (sec)</label>
                                         <input type="number" data-pv="$(P)$(M).ACCL"
-                                            class="input-dark-tab py-0.5 text-[10px]">
+                                            class="input-dark-tab py-0.5 text-xs">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Backlash -->
+                            <div class="border border-slate-700 rounded overflow-hidden">
+                                <div class="bg-slate-700/50 px-2 py-1 border-b border-slate-700">
+                                    <span class="text-sm font-black text-slate-300 uppercase">Backlash</span>
+                                </div>
+                                <div class="p-1.5 space-y-1.5">
+                                    <div>
+                                        <label class="text-xs text-slate-500 font-bold block">Distance</label>
+                                        <input type="number" data-pv="$(P)$(M).BDST"
+                                            class="input-dark-tab py-0.5 text-xs w-full">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-slate-500 font-bold block">Speed</label>
+                                        <input type="number" data-pv="$(P)$(M).BVEL"
+                                            class="input-dark-tab py-0.5 text-xs w-full">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-slate-500 font-bold block">Accel</label>
+                                        <input type="number" data-pv="$(P)$(M).BACC"
+                                            class="input-dark-tab py-0.5 text-xs w-full">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-slate-500 font-bold block">Move Frac</label>
+                                        <input type="number" data-pv="$(P)$(M).FRAC"
+                                            class="input-dark-tab py-0.5 text-xs w-full">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Backlash, Jog, Servo -->
-                        <div class="grid grid-cols-3 gap-3">
-                            <!-- Backlash Column -->
-                            <div class="border border-slate-700 rounded overflow-hidden">
-                                <div class="bg-slate-700/50 px-2 py-1 border-b border-slate-700">
-                                    <span class="text-[9px] font-black text-slate-300 uppercase">Backlash</span>
-                                </div>
-                                <div class="p-1.5 space-y-1.5">
-                                    <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Distance</label>
-                                        <input type="number" data-pv="$(P)$(M).BDST"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
-                                    </div>
-                                    <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Speed</label>
-                                        <input type="number" data-pv="$(P)$(M).BVEL"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
-                                    </div>
-                                    <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Accel</label>
-                                        <input type="number" data-pv="$(P)$(M).BACC"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
-                                    </div>
-                                    <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Move Frac</label>
-                                        <input type="number" data-pv="$(P)$(M).FRAC"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Jog Control & Homing -->
+                        <div class="grid grid-cols-2 gap-4">
                             <!-- Jog Column -->
                             <div class="border border-slate-700 rounded overflow-hidden">
                                 <div class="bg-slate-700/50 px-2 py-1 border-b border-slate-700">
-                                    <span class="text-[9px] font-black text-slate-300 uppercase">Jog Control</span>
+                                    <span class="text-sm font-black text-slate-300 uppercase">Jog Control</span>
                                 </div>
                                 <div class="p-1.5 space-y-1.5">
                                     <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Velocity</label>
+                                        <label class="text-xs text-slate-500 font-bold block">Velocity</label>
                                         <input type="number" data-pv="$(P)$(M).JVEL"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
+                                            class="input-dark-tab py-0.5 text-xs w-full">
                                     </div>
                                     <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Acceleration</label>
+                                        <label class="text-xs text-slate-500 font-bold block">Acceleration</label>
                                         <input type="number" data-pv="$(P)$(M).JAR"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
+                                            class="input-dark-tab py-0.5 text-xs w-full">
                                     </div>
                                 </div>
                             </div>
-                            <!-- Servo Column -->
+                            <!-- Homing Column -->
                             <div class="border border-slate-700 rounded overflow-hidden">
-                                <div class="bg-slate-700/50 px-2 py-1 border-b border-slate-700">
-                                    <span class="text-[9px] font-black text-slate-300 uppercase">Servo (PID)</span>
+                                <div class="bg-orange-600/20 px-2 py-1 border-b border-slate-700">
+                                    <span class="text-sm font-black text-orange-400 uppercase">Homing</span>
                                 </div>
                                 <div class="p-1.5 space-y-1.5">
                                     <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">P (PCOF)</label>
-                                        <input type="number" data-pv="$(P)$(M).PCOF"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full text-center">
+                                        <label class="text-xs text-slate-500 font-bold block">Home Velocity
+                                            (HVEL)</label>
+                                        <input type="number" data-pv="$(P)$(M).HVEL"
+                                            class="input-dark-tab py-0.5 text-xs w-full">
                                     </div>
                                     <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">I (ICOF)</label>
-                                        <input type="number" data-pv="$(P)$(M).ICOF"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full text-center">
+                                        <label class="text-xs text-slate-500 font-bold block">Home Accel (HACC)</label>
+                                        <input type="number" data-pv="$(P)$(M).HACC"
+                                            class="input-dark-tab py-0.5 text-xs w-full">
                                     </div>
                                     <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">D (DCOF)</label>
-                                        <input type="number" data-pv="$(P)$(M).DCOF"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full text-center">
+                                        <label class="text-xs text-slate-500 font-bold block">Home Decel (HDCC)</label>
+                                        <input type="number" data-pv="$(P)$(M).HDCC"
+                                            class="input-dark-tab py-0.5 text-xs w-full">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Resolution & Setup Tools -->
+                        <!-- Servo Column -->
                         <div class="border border-slate-700 rounded overflow-hidden">
-                            <div class="bg-blue-900/40 px-2 py-1 border-b border-slate-700">
-                                <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Resolution
-                                    & Setup</span>
+                            <div class="bg-slate-700/50 px-2 py-1 border-b border-slate-700">
+                                <span class="text-sm font-black text-slate-300 uppercase">Servo (PID)</span>
                             </div>
-                            <div class="p-2 grid grid-cols-3 gap-x-4 gap-y-2">
+                            <div class="p-1.5 space-y-1.5">
                                 <div>
-                                    <label class="text-[9px] text-slate-500 font-bold block mb-0.5">Motor Res
-                                        (MRES)</label>
-                                    <input type="number" data-pv="$(P)$(M).MRES"
-                                        class="input-dark-tab py-0.5 text-[10px] w-full text-right">
-                                </div>
-                                <div>
-                                    <label class="text-[9px] text-slate-500 font-bold block mb-0.5">Encoder Res
-                                        (ERES)</label>
-                                    <input type="number" data-pv="$(P)$(M).ERES"
-                                        class="input-dark-tab py-0.5 text-[10px] w-full text-right">
+                                    <label class="text-xs text-slate-500 font-bold block">P (PCOF)</label>
+                                    <input type="number" data-pv="$(P)$(M).PCOF"
+                                        class="input-dark-tab py-0.5 text-xs w-full text-center">
                                 </div>
                                 <div>
-                                    <label class="text-[9px] text-slate-500 font-bold block mb-0.5">Readback Res
-                                        (RRES)</label>
-                                    <input type="number" data-pv="$(P)$(M).RRES"
-                                        class="input-dark-tab py-0.5 text-[10px] w-full text-right">
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Retry Dbd</label>
-                                        <input type="number" data-pv="$(P)$(M).RDBD"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
-                                    </div>
-                                    <div>
-                                        <label class="text-[8px] text-slate-500 font-bold block">Retries</label>
-                                        <input type="number" data-pv="$(P)$(M).RTRY"
-                                            class="input-dark-tab py-0.5 text-[10px] w-full">
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="flex flex-col gap-0.5">
-                                        <label class="text-[8px] text-slate-500 font-bold block">Enc InLink</label>
-                                        <select data-pv="$(P)$(M).UEIP"
-                                            class="bg-slate-900 border border-slate-700 rounded text-[9px] w-full py-0.5 px-0.5 outline-none font-bold">
-                                            <option value="0">No</option>
-                                            <option value="1">Yes</option>
-                                        </select>
-                                    </div>
-                                    <div class="flex flex-col gap-0.5">
-                                        <label class="text-[8px] text-slate-500 font-bold block">RBV InLink</label>
-                                        <select data-pv="$(P)$(M).URIP"
-                                            class="bg-slate-900 border border-slate-700 rounded text-[9px] w-full py-0.5 px-0.5 outline-none font-bold">
-                                            <option value="0">No</option>
-                                            <option value="1">Yes</option>
-                                        </select>
-                                    </div>
+                                    <label class="text-xs text-slate-500 font-bold block">I (ICOF)</label>
+                                    <input type="number" data-pv="$(P)$(M).ICOF"
+                                        class="input-dark-tab py-0.5 text-xs w-full text-center">
                                 </div>
                                 <div>
-                                    <label class="text-[9px] text-slate-500 font-bold block mb-0.5">RBK Delay
-                                        (DLY)</label>
-                                    <input type="number" data-pv="$(P)$(M).DLY"
-                                        class="input-dark-tab py-0.5 text-[10px] w-full text-right">
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="text-[8px] text-slate-500 font-bold block">Precision (PREC)</label>
-                                    <input type="number" data-pv="$(P)$(M).PREC"
-                                        class="input-dark-tab py-0.5 text-[10px] w-full text-right">
-                                </div>
-                                <div class="col-span-2 grid grid-cols-1 gap-1">
-                                    <input type="text" data-pv="$(P)$(M).PREM"
-                                        class="input-dark-tab py-0.5 text-[9px] w-full" placeholder="Pre-move string">
-                                    <input type="text" data-pv="$(P)$(M).POST"
-                                        class="input-dark-tab py-0.5 text-[9px] w-full" placeholder="Post-move string">
+                                    <label class="text-xs text-slate-500 font-bold block">D (DCOF)</label>
+                                    <input type="number" data-pv="$(P)$(M).DCOF"
+                                        class="input-dark-tab py-0.5 text-xs w-full text-center">
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
-                    <!-- Column 2: Status Panel -->
+                    <!-- Column 2: Status Panel & Resolution -->
                     <div class="space-y-4">
                         <div class="border border-slate-700 rounded overflow-hidden sticky top-0">
                             <div class="bg-navy-900/80 bg-slate-900 px-2 py-1 border-b border-slate-700">
-                                <span
-                                    class="text-[10px] font-black text-slate-200 uppercase tracking-widest">STATUS</span>
+                                <span class="text-sm font-black text-slate-200 uppercase tracking-widest">STATUS</span>
                             </div>
                             <div class="p-2 space-y-3">
-                                <div class="flex flex-col gap-1 text-[10px]">
+                                <div class="flex flex-col gap-1 text-xs">
                                     <div
                                         class="flex justify-between items-center bg-black/40 p-1.5 rounded border border-slate-700/50">
                                         <span class="text-slate-500 font-bold">State</span>
@@ -472,9 +427,9 @@
                                             (CNEN)</span>
                                         <div class="flex gap-1">
                                             <button onclick="app.writePrefix('.CNEN', 0)"
-                                                class="px-2 py-0.5 text-[8px] font-bold rounded bg-slate-700 hover:bg-slate-600 border border-slate-600">Off</button>
+                                                class="px-2 py-0.5 text-xs font-bold rounded bg-slate-700 hover:bg-slate-600 border border-slate-600">Off</button>
                                             <button onclick="app.writePrefix('.CNEN', 1)"
-                                                class="px-2 py-0.5 text-[8px] font-bold rounded bg-indigo-900/30 text-indigo-400 border border-indigo-700/50">On</button>
+                                                class="px-2 py-0.5 text-xs font-bold rounded bg-indigo-900/30 text-indigo-400 border border-indigo-700/50">On</button>
                                             <span data-pv="$(P)$(M).CNEN" class="hidden"></span>
                                         </div>
                                     </div>
@@ -483,9 +438,9 @@
                                 <!-- MSTA Bits Visual (Simplified) -->
                                 <div class="bg-black/50 p-2 rounded border border-slate-700 mt-2">
                                     <span
-                                        class="text-[9px] text-slate-500 font-black uppercase mb-2 block border-b border-slate-800 pb-1">MSTA
+                                        class="text-xs text-slate-500 font-black uppercase mb-2 block border-b border-slate-800 pb-1">MSTA
                                         Bit Status</span>
-                                    <div class="grid grid-cols-2 gap-y-1 gap-x-3 text-[9px] font-bold">
+                                    <div class="grid grid-cols-2 gap-y-1 gap-x-3 text-xs font-bold">
                                         <div class="flex items-center gap-1.5">
                                             <div class="led-tiny w-2 h-2" data-msta-bit="0"></div><span>Done</span>
                                         </div>
@@ -511,30 +466,99 @@
                                 <!-- Utility Buttons -->
                                 <div class="grid grid-cols-2 gap-2 mt-4">
                                     <button onclick="app.writePrefix('.SYNC', 1)"
-                                        class="bg-indigo-900/20 hover:bg-indigo-900/40 border border-indigo-700/50 text-indigo-300 py-2 rounded text-[9px] font-black uppercase tracking-wider transition-all">Scan
+                                        class="bg-indigo-900/20 hover:bg-indigo-900/40 border border-indigo-700/50 text-indigo-300 py-2 rounded text-xs font-black uppercase tracking-wider transition-all">Scan
                                         Params</button>
                                     <button onclick="app.writePrefix('.LOAD', 1)"
-                                        class="bg-slate-700/40 hover:bg-slate-700/60 border border-slate-600 text-slate-300 py-2 rounded text-[9px] font-black uppercase tracking-wider transition-all">Load
+                                        class="bg-slate-700/40 hover:bg-slate-700/60 border border-slate-600 text-slate-300 py-2 rounded text-xs font-black uppercase tracking-wider transition-all">Load
                                         Settings</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resolution & Setup Tools -->
+                        <div class="border border-slate-700 rounded overflow-hidden">
+                            <div class="bg-blue-900/40 px-2 py-1 border-b border-slate-700">
+                                <span class="text-sm font-black text-slate-300 uppercase tracking-widest">Resolution &
+                                    Setup</span>
+                            </div>
+                            <div class="p-2 flex flex-col gap-1 resolution-setup-panel">
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">Motor Res (MRES)</label>
+                                    <input type="number" data-pv="$(P)$(M).MRES"
+                                        class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">Encoder Res (ERES)</label>
+                                    <input type="number" data-pv="$(P)$(M).ERES"
+                                        class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">Readback Res (RRES)</label>
+                                    <input type="number" data-pv="$(P)$(M).RRES"
+                                        class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">Retry Deadband (RDBD)</label>
+                                    <input type="number" data-pv="$(P)$(M).RDBD"
+                                        class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">Max Retries (RTRY)</label>
+                                    <input type="number" data-pv="$(P)$(M).RTRY"
+                                        class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">Enc InLink (UEIP)</label>
+                                    <select data-pv="$(P)$(M).UEIP"
+                                        class="bg-slate-900 border border-slate-700 rounded text-xs w-16 py-0.5 px-1 outline-none font-bold">
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">RBV InLink (URIP)</label>
+                                    <select data-pv="$(P)$(M).URIP"
+                                        class="bg-slate-900 border border-slate-700 rounded text-xs w-16 py-0.5 px-1 outline-none font-bold">
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">RBK Delay (DLY)</label>
+                                    <input type="number" data-pv="$(P)$(M).DLY"
+                                        class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                </div>
+                                <div class="flex justify-between items-center px-1 py-1 border-b border-slate-700/30">
+                                    <label class="text-xs text-slate-500 font-bold">Precision (PREC)</label>
+                                    <input type="number" data-pv="$(P)$(M).PREC"
+                                        class="input-dark-tab py-0.5 text-xs w-16 text-right">
+                                </div>
+                                <div class="space-y-1.5 pt-2">
+                                    <label class="text-xs text-slate-500 font-bold block mb-0.5">Move Strings (PREM /
+                                        POST)</label>
+                                    <input type="text" data-pv="$(P)$(M).PREM"
+                                        class="input-dark-tab py-0.5 text-xs w-full" placeholder="Pre-move string">
+                                    <input type="text" data-pv="$(P)$(M).POST"
+                                        class="input-dark-tab py-0.5 text-xs w-full" placeholder="Post-move string">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Bottom Footer Bar -->
-            <div
-                class="bg-slate-900 border-t border-slate-700 p-2 flex justify-between items-center text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                <div class="flex gap-4">
-                    <span>Precision: <span data-pv="$(P)$(M).PREC">4</span></span>
-                    <span>RMP (Raw Pos): <span data-pv="$(P)$(M).RMP">-10000</span></span>
-                    <span>RCNT (Retries): <span data-pv="$(P)$(M).RCNT">0</span></span>
-                </div>
-                <div class="flex gap-2">
-                    <span class="text-blue-500">KOHZU Motor Interface</span>
-                    <span class="text-slate-700">|</span>
-                    <span>$(P)$(M)</span>
+                <!-- Bottom Footer Bar -->
+                <div
+                    class="bg-slate-900 border-t border-slate-700 p-2 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    <div class="flex gap-4">
+                        <span>Precision: <span data-pv="$(P)$(M).PREC">4</span></span>
+                        <span>RMP (Raw Pos): <span data-pv="$(P)$(M).RMP">-10000</span></span>
+                        <span>RCNT (Retries): <span data-pv="$(P)$(M).RCNT">0</span></span>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-blue-500">KOHZU Motor Interface</span>
+                        <span class="text-slate-700">|</span>
+                        <span>$(P)$(M)</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -553,7 +577,7 @@
                 </div>
                 <span class="card-title text-lg font-bold text-white">Stage Information</span>
                 <div id="modal-stage-badge"
-                    class="ml-auto px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-blue-900/30 text-blue-400 border border-blue-800/50 uppercase">
+                    class="ml-auto px-3 py-1 rounded-full text-xs font-black tracking-widest bg-blue-900/30 text-blue-400 border border-blue-800/50 uppercase">
                     No Stage Selected</div>
             </div>
 
@@ -561,11 +585,12 @@
                 <!-- Specifications -->
                 <div class="p-6 border-b border-slate-700/50">
                     <h3
-                        class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        class="text-sm font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                         <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Mechanical Specifications
                     </h3>
                     <div id="modal-specs-list" class="grid grid-cols-1 gap-1.5">
-                        <div class="flex justify-center items-center py-8 text-slate-600 italic text-sm">Please upload a
+                        <div class="flex justify-center items-center py-8 text-slate-600 italic text-sm">Please
+                            upload a
                             JSON configuration file to view specifications.</div>
                     </div>
                 </div>
@@ -573,7 +598,7 @@
                 <!-- Driver Settings -->
                 <div class="p-6 flex-1 bg-slate-850/30">
                     <h3
-                        class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        class="text-sm font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                         <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div> Driver & Switching Settings
                     </h3>
                     <div id="modal-driver-list" class="grid grid-cols-1 gap-1.5"></div>
@@ -581,9 +606,10 @@
 
                 <!-- Notes Bar -->
                 <div class="p-4 bg-slate-900/50 border-t border-slate-700 mt-auto">
-                    <div class="text-[10px] text-slate-500 italic leading-relaxed">
+                    <div class="text-sm text-slate-500 italic leading-relaxed">
                         Note: PV values on the left are synchronized in real-time with the EPICS Motor Record.
-                        Parameter limits (HLM/LLM) and resolution (MRES) are set based on these stage specifications.
+                        Parameter limits (HLM/LLM) and resolution (MRES) are set based on these stage
+                        specifications.
                     </div>
                 </div>
             </div>
