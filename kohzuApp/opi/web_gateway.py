@@ -79,8 +79,13 @@ class EPICSWebSocket(tornado.websocket.WebSocketHandler):
                 pv_name = data.get("pv")
                 val = data.get("value")
                 if pv_name and val is not None:
-                    print(f"Writing {pv_name} = {val}")
-                    epics.caput(pv_name, val)
+                    try:
+                        print(f"Writing {pv_name} = {val}")
+                        epics.caput(pv_name, val, timeout=3)
+                    except Exception as write_err:
+                        print(f"  ⚠ Write FAILED for {pv_name}: {write_err}")
+                else:
+                    print(f"  ⚠ Skipped write: pv={pv_name}, val={val}")
 
         except Exception as e:
             print(f"Error handling message: {e}")
@@ -114,12 +119,24 @@ class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
     def set_extra_headers(self, path):
         self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
 
+class StageListHandler(tornado.web.RequestHandler):
+    """stages/ 디렉토리의 JSON 파일 목록을 반환하는 API"""
+    def get(self):
+        stages_dir = os.path.join(os.path.dirname(__file__), 'stages')
+        files = []
+        if os.path.isdir(stages_dir):
+            files = sorted([f for f in os.listdir(stages_dir) if f.endswith('.json')])
+        self.set_header('Content-Type', 'application/json')
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.write(json.dumps(files))
+
 def make_app():
     return tornado.web.Application([
         (r"/ws", EPICSWebSocket),
+        (r"/api/stages", StageListHandler),
         (r"/(.*)", NoCacheStaticFileHandler, {
             "path": os.path.dirname(__file__), 
-            "default_filename": "motorx_all.html"
+            "default_filename": "dashboard.html"
         }),
     ])
 
