@@ -360,3 +360,56 @@
 ### 🔍 검증 결과 (Validation)
 - [x] `/api/stages` API 및 `/stages/XA07A.json` 접근 확인
 - [ ] 런타임 테스트 - **web_gateway.py 재시작 + 브라우저 Ctrl+Shift+R** 후 드롭다운 테스트 필요
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+## 📋 8. 작업지시 (User Instruction)
+1. dashboard.html
+2. docs/GUI_Design_Guide.md 준수해서 업데이트
+
+- **참조 파일:**
+    - `kohzuApp/opi/dashboard.html`
+    - `docs/GUI_Design_Guide.md`
+
+### ✅ 8.1 Todo List (AI Analysis)
+- [x] **Step 1:** GUI Design Guide 전문 분석 (§1~§6 규격 파악)
+- [x] **Step 2:** dashboard.html의 CSS 및 카드 템플릿과 Guide 비교 → 불일치 항목 도출
+- [x] **Step 3:** 불일치 항목 전체 수정 적용
+- [x] **Step 4:** Documentation
+
+### 📝 8.2 Result (Execution Summary)
+
+#### GUI Design Guide 대비 수정 항목
+
+| Guide 규격 | 기존 (불일치) | 수정 후 (준수) |
+|-----------|-------------|-------------|
+| **§2 패널 헤더** | `.card-header` 배경 없음, `font-weight:600` | `bg-slate-700/50` 배경 추가, `font-black`, `uppercase`, `tracking-widest` |
+| **§4 입력 필드 테두리** | `border: #475569` | `border: #334155 !important` |
+| **§4 입력 필드 텍스트** | `color: #f8fafc` | `color: #e2e8f0 !important` |
+| **§4 입력 필드 반경** | `border-radius: 0.375rem` | `border-radius: 0.25rem` |
+| **§6 그리드 라벨 너비** | `60px` (전체) | `80px` (표준 준수) |
+| **§5 라벨 텍스트** | `text-[10px] font-semibold` | `text-xs font-bold` |
+| **§3.1 Tweak 버튼** | `btn btn-secondary` (ad-hoc) | `w-full text-xs font-bold ... bg-slate-700 hover:bg-slate-600 uppercase shadow-sm` (표준) |
+| **§3.3 STOP 버튼** | `btn-danger` 빨강 (`bg-red`) | `bg-yellow-600 hover:bg-yellow-500 text-slate-900 border-yellow-700` (§3.3 노란색 표준) |
+| **§2 행 구분선** | `border-slate-700/50` | `border-slate-700/30` (표준) |
+| **§6 Tweak 레이아웃** | `flex` 자유 배치 | `grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr]` (표준 그리드) |
+
+### 🛠 8.3 변경 사항 (Summary of Changes)
+- **CSS 영역**: `.card-header`(배경/패딩), `.card-title`(weight/transform/spacing), `.input-dark`(border/color/radius) 수정
+- **카드 템플릿**: 그리드 라벨 `60px→80px` 전환 (Header, Hi/Lo limit, Readback, Drive, Tweak 5곳), 라벨 텍스트 크기/두께 통일, Tweak 행 grid 구조화, STOP 버튼 노란색 테마 적용
+
+### 🔍 검증 결과 (Validation)
+- [x] GUI Design Guide §1~§6 전 항목 준수 확인
+- [ ] 런타임 테스트 - 브라우저 새로고침 후 시각적 확인 필요

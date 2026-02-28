@@ -102,3 +102,19 @@ USE, SET 모드 또는 특정 상태 피드백을 사용자에게 명확히 전�
   * **라벨 + 단일 입력 (2열)**: `grid grid-cols-[80px_1fr] gap-2 items-center px-2 py-1 border-b border-slate-700/30`
   * **라벨 + 조작 버튼 다수 (3열/4열)**: `grid grid-cols-[80px_1fr_1fr]`, `grid grid-cols-[80px_1fr_1fr_1fr_1fr]`
   * **설명**: Dynamics, Backlash, Jog Control, Homing 등 하위 설정 패널들에서 좌측 라벨 크기(`80px`)를 고정하고 나머지 공간을 컴포넌트들이 `1fr` 비율로 균등하게 나눠 갖도록 설정하여 좌측/우측 정렬 밸런스를 맞춥니다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

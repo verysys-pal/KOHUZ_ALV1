@@ -36,16 +36,25 @@
         }
 
         .card-header {
-            padding: 1rem;
+            padding: 0.5rem 0.75rem;
             border-bottom: 1px solid #334155;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            background-color: rgba(51, 65, 85, 0.5);
+            /* bg-slate-700/50 */
         }
 
         .card-title {
-            font-weight: 600;
-            color: #f8fafc;
+            font-weight: 900;
+            /* font-black */
+            color: #cbd5e1;
+            /* text-slate-300 */
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            /* tracking-widest */
+            font-size: 0.875rem;
+            /* text-sm */
         }
 
         .card-body {
@@ -53,12 +62,13 @@
         }
 
         .input-dark {
-            background-color: #0f172a;
-            border: 1px solid #475569;
-            color: #f8fafc;
-            border-radius: 0.375rem;
-            padding: 0.25rem 0.5rem;
+            background-color: #0f172a !important;
+            border: 1px solid #334155 !important;
+            color: #e2e8f0 !important;
+            border-radius: 0.25rem;
+            padding: 0.125rem 0.375rem;
             transition: border-color 0.2s;
+            outline: none;
         }
 
         .input-dark:focus {
@@ -1069,9 +1079,9 @@
                     <div class="card-body cursor-pointer flex-1 flex flex-col gap-1.5 p-3">
                         
                         <!-- Header Row -->
-                        <div class="grid grid-cols-[60px_1fr_1fr_30px] gap-2 items-center text-center pb-1 border-b border-slate-700/50">
-                            <div class="text-[9px] font-bold text-slate-500 uppercase text-left">
-                                <span class="truncate max-w-[60px] inline-block" data-pv="${pvPrefix}.DESC" title="Description">Desc</span>
+                        <div class="grid grid-cols-[80px_1fr_1fr_30px] gap-2 items-center text-center pb-1 border-b border-slate-700/30">
+                            <div class="text-xs font-bold text-slate-400 uppercase text-left">
+                                <span class="truncate max-w-[80px] inline-block" data-pv="${pvPrefix}.DESC" title="Description">Desc</span>
                             </div>
                             <div class="text-[10px] font-bold text-slate-400 uppercase">User</div>
                             <div class="text-[10px] font-bold text-slate-400 uppercase">Dial</div>
@@ -1079,18 +1089,18 @@
                         </div>
 
                         <!-- Hi limit -->
-                        <div class="grid grid-cols-[60px_1fr_1fr_30px] gap-2 items-center">
-                            <div class="text-[10px] font-semibold text-slate-400 text-right pr-1 tracking-tight">Hi limit</div>
-                            <input type="number" data-pv="${pvPrefix}.HLM" class="w-full input-dark text-right text-xs px-1.5 py-1" onclick="event.stopPropagation()">
-                            <input type="number" data-pv="${pvPrefix}.DHLM" class="w-full input-dark text-right text-xs px-1.5 py-1 text-slate-500" onclick="event.stopPropagation()">
+                        <div class="grid grid-cols-[80px_1fr_1fr_30px] gap-2 items-center">
+                            <div class="text-xs font-bold text-slate-400 text-right pr-1">Hi limit</div>
+                            <input type="number" data-pv="${pvPrefix}.HLM" class="w-[80px] input-dark-tab py-0.5 text-xs text-right" onclick="event.stopPropagation()">
+                            <input type="number" data-pv="${pvPrefix}.DHLM" class="w-[80px] input-dark-tab py-0.5 text-xs text-right text-slate-500" onclick="event.stopPropagation()">
                             <div class="flex justify-center">
                                 <div class="led w-3 h-3" data-led-pv="${pvPrefix}.HLS" data-led-on="1" data-led-color="error"></div>
                             </div>
                         </div>
 
                         <!-- Readback -->
-                        <div class="grid grid-cols-[60px_1fr_1fr_30px] gap-2 items-center">
-                            <div class="text-[10px] font-bold text-green-500 text-right pr-1 tracking-tight">Readback</div>
+                        <div class="grid grid-cols-[80px_1fr_1fr_30px] gap-2 items-center">
+                            <div class="text-xs font-bold text-green-500 text-right pr-1">Readback</div>
                             <div class="bg-black border border-slate-700 rounded px-1.5 py-1 text-right flex justify-end items-center h-full overflow-hidden">
                                 <span data-pv="${pvPrefix}.RBV" class="pv-font text-green-400 font-bold text-[13px] leading-none tabular-nums pr-1">0.0000</span>
                             </div>
@@ -1103,10 +1113,10 @@
                         </div>
 
                         <!-- Drive -->
-                        <div class="grid grid-cols-[60px_1fr_1fr_30px] gap-2 items-center">
-                            <div class="text-[10px] font-bold text-blue-400 text-right pr-1 tracking-tight">Drive</div>
-                            <input type="number" data-pv="${pvPrefix}.VAL" class="w-full bg-slate-900 border border-blue-900/50 focus:border-blue-500 rounded text-right text-xs px-1.5 py-1 text-white font-bold outline-none transition-colors" onclick="event.stopPropagation()">
-                            <input type="number" data-pv="${pvPrefix}.DVAL" class="w-full input-dark text-right text-xs px-1.5 py-1 text-slate-500" onclick="event.stopPropagation()">
+                        <div class="grid grid-cols-[80px_1fr_1fr_30px] gap-2 items-center">
+                            <div class="text-xs font-bold text-blue-400 text-right pr-1">Drive</div>
+                            <input type="number" data-pv="${pvPrefix}.VAL" class="w-[80px] input-dark-tab py-0.5 text-xs text-right text-white font-bold" onclick="event.stopPropagation()">
+                            <input type="number" data-pv="${pvPrefix}.DVAL" class="w-[80px] input-dark-tab py-0.5 text-xs text-right text-slate-500" onclick="event.stopPropagation()">
                             <div class="flex flex-col items-center justify-center -space-y-0.5">
                                 <div class="text-[7px] text-slate-400 font-bold uppercase leading-tight mb-0.5">MOVing</div>
                                 <div class="led w-2.5 h-2.5" data-led-pv="${pvPrefix}.DMOV" data-led-on="0" data-led-color="on"></div>
@@ -1114,23 +1124,23 @@
                         </div>
 
                         <!-- Lo limit -->
-                        <div class="grid grid-cols-[60px_1fr_1fr_30px] gap-2 items-center">
-                            <div class="text-[10px] font-semibold text-slate-400 text-right pr-1 tracking-tight">Lo limit</div>
-                            <input type="number" data-pv="${pvPrefix}.LLM" class="w-full input-dark text-right text-xs px-1.5 py-1" onclick="event.stopPropagation()">
-                            <input type="number" data-pv="${pvPrefix}.DLLM" class="w-full input-dark text-right text-xs px-1.5 py-1 text-slate-500" onclick="event.stopPropagation()">
+                        <div class="grid grid-cols-[80px_1fr_1fr_30px] gap-2 items-center">
+                            <div class="text-xs font-bold text-slate-400 text-right pr-1">Lo limit</div>
+                            <input type="number" data-pv="${pvPrefix}.LLM" class="w-[80px] input-dark-tab py-0.5 text-xs text-right" onclick="event.stopPropagation()">
+                            <input type="number" data-pv="${pvPrefix}.DLLM" class="w-[80px] input-dark-tab py-0.5 text-xs text-right text-slate-500" onclick="event.stopPropagation()">
                             <div class="flex justify-center">
                                 <div class="led w-3 h-3" data-led-pv="${pvPrefix}.LLS" data-led-on="1" data-led-color="error"></div>
                             </div>
                         </div>
 
                         <!-- Tweak -->
-                        <div class="flex items-center gap-1 mt-1 pt-2 border-t border-slate-700/50">
-                            <span class="text-[10px] font-semibold text-slate-400 w-[60px] text-right pr-1">Tweak</span>
-                            <button onclick="app.write('${pvPrefix}.JOGR', 1); event.stopPropagation();" onmouseup="app.write('${pvPrefix}.JOGR', 0)" class="btn btn-secondary flex-1 py-1 text-[10px] font-bold border-slate-600 min-w-0 px-0">Go-</button>
-                            <button onclick="app.write('${pvPrefix}.TWR', 1); event.stopPropagation();" class="btn btn-secondary px-2 py-1 text-xs font-bold border-slate-600">&lt;</button>
-                            <input type="number" data-pv="${pvPrefix}.TWV" class="w-[60px] input-dark text-center text-xs px-1 py-1" onclick="event.stopPropagation()">
-                            <button onclick="app.write('${pvPrefix}.TWF', 1); event.stopPropagation();" class="btn btn-secondary px-2 py-1 text-xs font-bold border-slate-600">&gt;</button>
-                            <button onclick="app.write('${pvPrefix}.JOGF', 1); event.stopPropagation();" onmouseup="app.write('${pvPrefix}.JOGF', 0)" class="btn btn-secondary flex-1 py-1 text-[10px] font-bold border-slate-600 min-w-0 px-0">Go+</button>
+                        <div class="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] gap-1 items-center mt-1 pt-2 border-t border-slate-700/30">
+                            <span class="text-xs font-bold text-slate-400 text-right pr-1">Tweak</span>
+                            <button onclick="app.write('${pvPrefix}.JOGR', 1); event.stopPropagation();" onmouseup="app.write('${pvPrefix}.JOGR', 0)" class="w-full text-xs font-bold py-1 px-2 rounded border border-slate-600 bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors uppercase shadow-sm">Go-</button>
+                            <button onclick="app.write('${pvPrefix}.TWR', 1); event.stopPropagation();" class="w-full text-xs font-bold py-1 px-2 rounded border border-slate-600 bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors uppercase shadow-sm">&lt;</button>
+                            <input type="number" data-pv="${pvPrefix}.TWV" class="w-[80px] input-dark-tab py-0.5 text-xs text-center" onclick="event.stopPropagation()">
+                            <button onclick="app.write('${pvPrefix}.TWF', 1); event.stopPropagation();" class="w-full text-xs font-bold py-1 px-2 rounded border border-slate-600 bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors uppercase shadow-sm">&gt;</button>
+                            <button onclick="app.write('${pvPrefix}.JOGF', 1); event.stopPropagation();" onmouseup="app.write('${pvPrefix}.JOGF', 0)" class="w-full text-xs font-bold py-1 px-2 rounded border border-slate-600 bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors uppercase shadow-sm">Go+</button>
                         </div>
                         
                         <!-- Status row -->
@@ -1141,7 +1151,7 @@
                                 <!-- Hidden subscription for MOVN -->
                                 <span data-pv="${pvPrefix}.MOVN" class="hidden"></span>
                             </div>
-                            <button onclick="app.write('${pvPrefix}.STOP', 1); event.stopPropagation();" class="btn btn-danger py-1 px-4 text-[10px] shadow-lg shadow-red-900/20 border border-red-500 font-bold tracking-wider rounded">STOP</button>
+                            <button onclick="app.write('${pvPrefix}.STOP', 1); event.stopPropagation();" class="text-[10px] font-black py-1 px-4 rounded border border-yellow-700 bg-yellow-600 hover:bg-yellow-500 text-slate-900 transition-colors shadow-sm uppercase tracking-wider">STOP</button>
                         </div>
                         <!-- Hidden MSTA for hardware health monitoring -->
                         <div class="hidden" data-pv="${pvPrefix}.MSTA"></div>
