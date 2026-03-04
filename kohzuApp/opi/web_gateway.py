@@ -1,0 +1,198 @@
+
+import tornado.ioloop
+import collections.abc
+# Patch for Python 3.10+ compatibility with older Tornado versions
+if not hasattr(collections, 'MutableMapping'):
+    collections.MutableMapping = collections.abc.MutableMapping
+
+import tornado.web
+import tornado.websocket
+import epics
+import json
+import threading
+
+import os
+
+# Global state
+connected_clients = set()
+active_pvs = {}
+main_loop = None
+
+def global_pv_callback(pvname=None, value=None, char_value=None, **kwargs):
+    """
+    Callback from PyEPICS thread.
+    Schedules update on Tornado Main Loop.
+    """
+    if pvname is not None and value is not None:
+        msg_data = {"type": "update", "pv": pvname, "value": value}
+        if char_value:
+            msg_data["char_value"] = char_value
+             
+        # Schedule broadcast on main thread safely
+        if main_loop:
+            main_loop.add_callback(broadcast_update, json.dumps(msg_data))
+
+def global_conn_callback(pvname=None, conn=None, **kwargs):
+    """
+    Callback from PyEPICS thread for PV connection status.
+    """
+    if pvname is not None and conn is not None:
+        msg_data = {"type": "connection", "pv": pvname, "connected": conn}
+        if main_loop:
+            main_loop.add_callback(broadcast_update, json.dumps(msg_data))
+
+def broadcast_update(message):
+    """
+    Executed on main thread. Sends message to all connected clients.
+    """
+    for client in connected_clients:
+        try:
+            client.write_message(message)
+        except Exception as e:
+            # Handle closed connections gracefully if remove failed
+            pass
+
+class EPICSWebSocket(tornado.websocket.WebSocketHandler):
+    def check_origin(self, origin):
+        return True
+
+    def open(self):
+        print("Client connected")
+        connected_clients.add(self)
+
+    def on_close(self):
+        print("Client disconnected")
+        if self in connected_clients:
+            connected_clients.remove(self)
+
+    def on_message(self, message):
+        try:
+            data = json.loads(message)
+            msg_type = data.get("type")
+            
+            if msg_type == "subscribe":
+                pvs = data.get("pvs", [])
+                for pv_name in pvs:
+                    self.monitor_pv(pv_name)
+
+            elif msg_type == "write":
+                pv_name = data.get("pv")
+                val = data.get("value")
+                if pv_name and val is not None:
+                    try:
+                        print(f"Writing {pv_name} = {val}")
+                        epics.caput(pv_name, val, timeout=3)
+                    except Exception as write_err:
+                        print(f"  ⚠ Write FAILED for {pv_name}: {write_err}")
+                else:
+                    print(f"  ⚠ Skipped write: pv={pv_name}, val={val}")
+
+        except Exception as e:
+            print(f"Error handling message: {e}")
+
+    def monitor_pv(self, pv_name):
+        if pv_name not in active_pvs:
+            print(f"Monitoring PV: {pv_name}")
+            # Create PV with global callback and low timeout to prevent Tornado blocking on missing PVs
+            p = epics.PV(pv_name, callback=global_pv_callback, connection_callback=global_conn_callback, connection_timeout=0.01)
+            active_pvs[pv_name] = p
+        else:
+            # Send current value immediately if available
+            p = active_pvs[pv_name]
+            
+            # Send connection state first
+            self.write_message(json.dumps({
+                "type": "connection",
+                "pv": pv_name,
+                "connected": p.connected
+            }))
+            
+            if p.connected:
+                 self.write_message(json.dumps({
+                     "type": "update", 
+                     "pv": pv_name, 
+                     "value": p.value,
+                     "char_value": p.char_value
+                 }))
+
+class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+
+class StageListHandler(tornado.web.RequestHandler):
+    """stages/ 디렉토리의 JSON 파일 목록을 반환하는 API"""
+    def get(self):
+        stages_dir = os.path.join(os.path.dirname(__file__), 'stages')
+        files = []
+        if os.path.isdir(stages_dir):
+            files = sorted([f for f in os.listdir(stages_dir) if f.endswith('.json')])
+        self.set_header('Content-Type', 'application/json')
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.write(json.dumps(files))
+
+class SessionHandler(tornado.web.RequestHandler):
+    """sessions/ 디렉토리의 JSON 파일 목록을 반환하거나 새 세션을 저장하는 API"""
+    def get(self):
+        sessions_dir = os.path.join(os.path.dirname(__file__), 'sessions')
+        files = []
+        if os.path.isdir(sessions_dir):
+            files = sorted([f for f in os.listdir(sessions_dir) if f.endswith('.json')])
+        self.set_header('Content-Type', 'application/json')
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.write(json.dumps(files))
+
+    def post(self):
+        try:
+            data = json.loads(self.request.body)
+            filename = data.get("filename")
+            session_data = data.get("data")
+            
+            if not filename or not session_data:
+                self.set_status(400)
+                self.write({"error": "Missing filename or data"})
+                return
+
+            if not filename.endswith(".json"):
+                filename += ".json"
+
+            sessions_dir = os.path.join(os.path.dirname(__file__), 'sessions')
+            if not os.path.exists(sessions_dir):
+                os.makedirs(sessions_dir)
+
+            file_path = os.path.join(sessions_dir, filename)
+            with open(file_path, 'w') as f:
+                json.dump(session_data, f, indent=2)
+
+            self.write({"message": f"Session saved to {filename}"})
+        except Exception as e:
+            self.set_status(500)
+            self.write({"error": str(e)})
+
+def make_app():
+    return tornado.web.Application([
+        (r"/ws", EPICSWebSocket),
+        (r"/api/stages", StageListHandler),
+        (r"/api/sessions", SessionHandler),
+        (r"/(.*)", NoCacheStaticFileHandler, {
+            "path": os.path.dirname(__file__), 
+            "default_filename": "dashboard.html"
+        }),
+    ])
+
+if __name__ == "__main__":
+    app = make_app()
+    port = 8888
+    try:
+        # Listen on all interfaces (0.0.0.0)
+        app.listen(port, address="0.0.0.0")
+        print(f"EPICS Web Gateway listening on http://0.0.0.0:{port}/")
+    except OSError:
+        port = 9999
+        app.listen(port, address="0.0.0.0")
+        print(f"EPICS Web Gateway listening on http://0.0.0.0:{port}/")
+        
+    main_loop = tornado.ioloop.IOLoop.current()
+    try:
+        main_loop.start()
+    except KeyboardInterrupt:
+        print("Stopping gateway...")

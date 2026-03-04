@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next-Gen EPICS Motor Controller</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .pv-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Enforce Width Constraints */
+        .card-responsive {
+            width: 100%;
+            min-width: 350px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .card-header {
+            padding: 1rem;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .input-dark {
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-dark:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: #475569;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .btn-icon {
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .led {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: #334155;
+            border: 1px solid #475569;
+            transition: background-color 0.3s;
+        }
+
+        .led.on {
+            background-color: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+            border-color: #16a34a;
+        }
+
+        .led.warn {
+            background-color: #eab308;
+            box-shadow: 0 0 8px #eab308;
+            border-color: #ca8a04;
+        }
+
+        .led.error {
+            background-color: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+            border-color: #dc2626;
+        }
+
+        /* Animation for Moving State */
+        .moving-bg {
+            background: linear-gradient(45deg, #1e293b 25%, #0f172a 25%, #0f172a 50%, #1e293b 50%, #1e293b 75%, #0f172a 75%, #0f172a 100%);
+            background-size: 20px 20px;
+            animation: move-stripes 1s linear infinite;
+        }
+
+        @keyframes move-stripes {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 20px 20px;
+            }
+        }
+
+        /* Task 20: Custom Tooltip */
+        .pv-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 100;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .pv-tooltip.show {
+            opacity: 1;
+        }
+
+
+        /* Make sure parents have relative positioning for absolute children */
+        [data-pv],
+        [data-led-pv],
+        [data-tooltip-pv] {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+        <div class="px-4 py-3 flex flex-row justify-between items-center gap-2 md:gap-4">
+            <!-- Left Group: Title & PV Info -->
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4">
+                <!-- Row 1: Logo + Title + Version -->
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 p-1.5 md:p-2 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-sm md:text-xl font-bold text-white tracking-tight">
+                        Kohzu Motor Control
+                        <span class="hidden md:inline text-xs text-slate-500 font-normal ml-2">(v1.13 Text
+                            Fix)</span>
+                    </h1>
+                </div>
+
+                <!-- Row 2: PV Info -->
+                <div class="flex items-center gap-2 text-xs md:text-sm text-slate-400 pl-1 md:pl-0">
+                    <div class="flex items-center gap-1">
+                        <span class="hidden md:inline">PV:</span>
+                        <span id="prefix-display" class="pv-font text-blue-400 font-semibold">LOADING...</span>
+                    </div>
+                    <div class="hidden md:block w-px h-4 bg-slate-600"></div>
+                    <div class="flex items-center gap-1">
+                        <span data-pv="$(P)$(M).DESC" class="pv-font text-slate-300">LOADING...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Group: Status & Abort -->
+            <div class="flex flex-row items-center gap-2 md:gap-4">
+                <div id="conn-status"
+                    class="flex items-center gap-1.5 px-2 py-1 md:px-3 rounded-full bg-slate-700 text-slate-300 text-[10px] md:text-xs font-semibold whitespace-nowrap">
+                    <div class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-slate-500"></div>
+                    <span class="hidden sm:inline">Disconnected</span>
+                    <span class="sm:hidden">Disc</span>
+                </div>
+                <button onclick="app.write('$(P)allstop.VAL', 1)"
+                    class="btn btn-danger flex items-center gap-1.5 shadow-lg shadow-red-900/20 text-xs md:text-sm py-1.5 px-2 md:px-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    ABORT ALL
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main
+        class="flex-1 p-6 grid grid-cols-1 md:grid-cols-[repeat(2,minmax(350px,400px))] xl:grid-cols-[repeat(3,minmax(350px,400px))] justify-center gap-[12px]">
+
+        <!-- Column 1: Primary Control -->
+        <div class="xl:col-span-1 space-y-6">
+
+            <!-- Drive Card -->
+            <div class="card card-responsive relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+
+                <div class="card-header bg-slate-800/50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                    <span class="card-title">Drive & Position</span>
+                </div>
+
+                <div class="card-body">
+                    <!-- Main Position Display -->
+                    <div class="mb-8 p-6 bg-black rounded-xl border border-slate-700 relative group">
+                        <label class="absolute top-3 left-4 text-xs font-bold text-slate-500 tracking-wider">READBACK
+                            VALUE (RBV)</label>
+                        <div class="flex justify-between items-end">
+                            <div data-pv="$(P)$(M).RBV"
+                                class="pv-font text-6xl font-bold text-green-400 tracking-tighter tabular-nums drop-shadow-glow">
+                                0.0000</div>
+                            <div class="text-slate-500 font-bold mb-2 pv-font" data-pv="$(P)$(M).EGU">mm</div>
+                        </div>
+                        <div id="moving-overlay"
+                            class="absolute inset-0 bg-blue-500/10 rounded-xl pointer-events-none opacity-0 transition-opacity duration-300">
+                        </div>
+                    </div>
+
+                    <!-- Target Setting -->
+                    <div class="grid grid-cols-12 gap-4 mb-6">
+                        <div class="col-span-8">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">TARGET POSITION
+                                (VAL)</label>
+                            <div class="flex relative">
+                                <input type="number" data-pv="$(P)$(M).VAL"
+                                    class="w-full bg-slate-900 border-2 border-slate-600 rounded-l-lg py-3 px-4 text-xl font-bold text-white focus:border-blue-500 focus:z-10 outline-none pv-font"
+                                    placeholder="Enter position...">
+                                <button
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-r-lg font-bold border-2 border-blue-600 transition-colors"
+                                    onclick="app.writeInput('$(P)$(M).VAL')">MOVE</button>
+                            </div>
+                        </div>
+                        <div class="col-span-4 flex flex-col justify-end">
+                            <button onclick="app.write('$(P)$(M).STOP', 1)" data-tooltip-pv="$(P)$(M).STOP"
+                                class="h-[52px] w-full bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg border-2 border-red-500 shadow-lg shadow-red-900/30 flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                STOP
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tweak & Jog Controls -->
+                    <div class="bg-slate-800/50 rounded-lg p-4 mb-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase">Interactive Control</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-slate-500">Step Size:</span>
+                                <input type="number" data-pv="$(P)$(M).TWV"
+                                    class="w-20 input-dark text-right text-sm pv-font">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-3">
+                            <button onclick="app.write('$(P)$(M).TWR', 1)" data-tooltip-pv="$(P)$(M).TWR"
+                                class="btn btn-secondary flex flex-col items-center py-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Tweak -
+                            </button>
+                            <button onclick="app.write('$(P)$(M).JOGR', 1)" onmouseup="app.write('$(P)$(M).JOGR', 0)"
+                                data-tooltip-pv="$(P)$(M).JOGR"
+                                class="btn btn-secondary flex flex-col items-center py-3 border border-slate-600 bg-slate-800">
+                                <span class="text-xs uppercase tracking-wide">Jog -</span>
+                            </button>
+                            <button onclick="app.write('$(P)$(M).JOGF', 1)" onmouseup="app.write('$(P)$(M).JOGF', 0)"
+                                data-tooltip-pv="$(P)$(M).JOGF"
+                                class="btn btn-secondary flex flex-col items-center py-3 border border-slate-600 bg-slate-800">
+                                <span class="text-xs uppercase tracking-wide">Jog +</span>
+                            </button>
+                            <button onclick="app.write('$(P)$(M).TWF', 1)" data-tooltip-pv="$(P)$(M).TWF"
+                                class="btn btn-secondary flex flex-col items-center py-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Tweak +
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scan Controls (Merged) -->
+                    <div class="bg-slate-800/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase">Scan Control</span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-xs text-slate-400 block mb-1">Stop/Pause/Go (SPMG)</label>
+                            <!-- Hidden subscription for SPMG status -->
+                            <span data-pv="$(P)$(M).SPMG" class="hidden"></span>
+                            <div class="flex gap-1 bg-slate-900 p-1 rounded border border-slate-700">
+                                <button id="btn-spmg-0" onclick="app.write('$(P)$(M).SPMG', 0)"
+                                    class="flex-1 py-1.5 text-xs font-semibold rounded transition-all text-slate-400 hover:text-white hover:bg-slate-700">Stop</button>
+                                <button id="btn-spmg-1" onclick="app.write('$(P)$(M).SPMG', 1)"
+                                    class="flex-1 py-1.5 text-xs font-semibold rounded transition-all text-slate-400 hover:text-white hover:bg-slate-700">Pause</button>
+                                <button id="btn-spmg-2" onclick="app.write('$(P)$(M).SPMG', 2)"
+                                    class="flex-1 py-1.5 text-xs font-semibold rounded transition-all text-slate-400 hover:text-white hover:bg-slate-700">Move</button>
+                                <button id="btn-spmg-3" onclick="app.write('$(P)$(M).SPMG', 3)"
+                                    class="flex-1 py-1.5 text-xs font-semibold rounded transition-all text-slate-400 hover:text-white hover:bg-slate-700">Go</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="app.write('$(P)$(M):scanParms.LOAD', 1)"
+                                class="btn btn-secondary text-xs">Load
+                                Scan</button>
+                            <button onclick="app.write('$(P)$(M):scanParms.GO', 1)" class="btn btn-primary text-xs">Go
+                                Scan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Card -->
+            <div class="card card-responsive">
+                <div class="card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="card-title">Motor Status</span>
+                </div>
+                <div class="card-body">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- Moving Indicator -->
+                        <div
+                            class="p-3 bg-slate-800 rounded-lg border border-slate-700 flex flex-col items-center justify-center gap-2">
+                            <span class="text-xs text-slate-400 font-bold uppercase">State</span>
+                            <div id="status-movn"
+                                class="px-3 py-1 rounded text-xs font-bold bg-slate-700 text-slate-400">
+                                IDLE</div>
+                        </div>
+
+                        <!-- Done Indicator -->
+                        <div
+                            class="p-3 bg-slate-800 rounded-lg border border-slate-700 flex flex-col items-center justify-center gap-2">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Done (DMOV)</span>
+                            <div class="led" data-led-pv="$(P)$(M).DMOV" data-led-on="1"></div>
+                        </div>
+
+                        <!-- High Limit -->
+                        <div
+                            class="p-3 bg-slate-800 rounded-lg border border-slate-700 flex flex-col items-center justify-center gap-2">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Hi-Limit (HLS)</span>
+                            <div class="led" data-led-pv="$(P)$(M).HLS" data-led-on="1" data-led-color="error"></div>
+                        </div>
+
+                        <!-- Low Limit -->
+                        <div
+                            class="p-3 bg-slate-800 rounded-lg border border-slate-700 flex flex-col items-center justify-center gap-2">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Lo-Limit (LLS)</span>
+                            <div class="led" data-led-pv="$(P)$(M).LLS" data-led-on="1" data-led-color="error"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-700 grid grid-cols-2 gap-4">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-400">Missed Steps (MISS)</span>
+                            <div class="led" data-led-pv="$(P)$(M).MISS" data-led-on="1" data-led-color="warn"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-400">Home Status (ATHM)</span>
+                            <div class="led" data-led-pv="$(P)$(M).ATHM" data-led-on="1"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-400">Communication (CNEN)</span>
+                            <div class="led" data-led-pv="$(P)$(M).CNEN" data-led-on="1"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-400">Problem (SEVR)</span>
+                            <div class="led" data-led-pv="$(P)$(M).SEVR" data-led-on="MAJOR" data-led-color="error">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Parameters -->
+        <div class="xl:col-span-1 space-y-6 flex flex-col items-center">
+            <!-- Dynamics -->
+            <!-- Dynamics -->
+            <div class="card card-responsive">
+                <div class="card-header">
+                    <span class="card-title text-sm">Dynamics & Backlash</span>
+                </div>
+                <div class="card-body grid grid-cols-2 gap-4">
+                    <!-- Left: Dynamics -->
+                    <div class="space-y-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">Dynamics</div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Velocity (VELO)</label>
+                                <span class="text-xs text-slate-500 pv-font" data-pv="$(P)$(M).EGU">mm/s</span>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).VELO"
+                                class="w-full input-dark text-right font-bold text-blue-400">
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Max Velocity (VMAX)</label>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).VMAX"
+                                class="w-full input-dark text-right text-slate-400">
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Acceleration (ACCL)</label>
+                                <span class="text-xs text-slate-500 pv-font">sec</span>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).ACCL" class="w-full input-dark text-right">
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-xs text-slate-400">Move Fraction (FRAC)</label>
+                            </div>
+                            <input type="number" data-pv="$(P)$(M).FRAC" class="w-full input-dark text-right">
+                        </div>
+                    </div>
+
+                    <!-- Right: Jogging -->
+                    <div class="space-y-4 border-l border-slate-700 pl-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">Jogging</div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Jog Vel (JVEL)</label>
+                            <input type="number" data-pv="$(P)$(M).JVEL" class="w-full input-dark text-right">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Jog Accel (JAR)</label>
+                            <input type="number" data-pv="$(P)$(M).JAR" class="w-full input-dark text-right">
+                        </div>
+                        <div class="pt-2 border-t border-slate-700/50">
+                            <div class="text-[10px] font-bold text-slate-600 mb-1 uppercase">Backlash</div>
+                            <label class="text-[10px] text-slate-400 block mb-1">Dist (BDST)</label>
+                            <input type="number" data-pv="$(P)$(M).BDST" class="w-full input-dark text-right text-xs">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soft Limits -->
+            <!-- Soft Limits -->
+            <div class="card card-responsive">
+                <div class="card-header">
+                    <span class="card-title text-sm">Soft Limits</span>
+                </div>
+                <div class="card-body grid grid-cols-2 gap-4">
+                    <!-- Left: User Limits -->
+                    <div class="space-y-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">User Limits</div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">High (HLM)</label>
+                            <input type="number" data-pv="$(P)$(M).HLM"
+                                class="w-full input-dark text-right border-red-900/50 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Low (LLM)</label>
+                            <input type="number" data-pv="$(P)$(M).LLM"
+                                class="w-full input-dark text-right border-blue-900/50 focus:border-blue-500">
+                        </div>
+                    </div>
+
+                    <!-- Right: Dial Limits -->
+                    <div class="space-y-4 border-l border-slate-700 pl-4">
+                        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">Dial Limits</div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">High (DHLM)</label>
+                            <input type="number" data-pv="$(P)$(M).DHLM"
+                                class="w-full input-dark text-right text-slate-500">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Low (DLLM)</label>
+                            <input type="number" data-pv="$(P)$(M).DLLM"
+                                class="w-full input-dark text-right text-slate-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 3: Advanced/Setup -->
+        <div class="xl:col-span-1 space-y-6 flex flex-col items-center">
+            <!-- Calibration & Homing -->
+            <div class="card card-responsive">
+                <div class="card-header">
+                    <span class="card-title text-sm">Calibration / Homing</span>
+                </div>
+                <div class="card-body grid grid-cols-2 gap-3">
+                    <div class="col-span-2 space-y-2 mb-2">
+                        <label class="text-xs text-slate-400">Set Position (SET)</label>
+                        <div class="flex gap-2 bg-slate-800 p-1 rounded border border-slate-600">
+                            <button onclick="app.write('$(P)$(M).SET', 0)" id="btn-set-use"
+                                data-tooltip-pv="$(P)$(M).SET=0"
+                                class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 border border-transparent hover:border-slate-500 hover:text-white">Use</button>
+                            <button onclick="app.write('$(P)$(M).SET', 1)" id="btn-set-set"
+                                data-tooltip-pv="$(P)$(M).SET=1"
+                                class="flex-1 py-1 text-xs rounded transition-colors text-center text-slate-400 border border-transparent hover:border-slate-500 hover:text-white">Set</button>
+                        </div>
+                        <span data-pv="$(P)$(M).SET" class="hidden"></span>
+                    </div>
+
+                    <button onclick="app.write('$(P)$(M).HOMF', 1)" data-tooltip-pv="$(P)$(M).HOMF"
+                        class="btn btn-secondary text-xs">Home Fwd</button>
+                    <button onclick="app.write('$(P)$(M).HOMR', 1)" data-tooltip-pv="$(P)$(M).HOMR"
+                        class="btn btn-secondary text-xs">Home Rev</button>
+
+                    <div class="col-span-2 pt-2 border-t border-slate-700">
+                        <label class="text-xs text-slate-400 mb-1 block">Direction (DIR)</label>
+                        <select data-pv="$(P)$(M).DIR" class="w-full input-dark text-xs"
+                            onchange="app.write(this.getAttribute('data-pv'), this.value)">
+                            <option value="0">Pos</option>
+                            <option value="1">Neg</option>
+                        </select>
+                    </div>
+
+                    <div class="col-span-2 pt-2 border-t border-slate-700">
+                        <label class="text-xs text-slate-400 mb-1 block">Offset (OFF)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" data-pv="$(P)$(M).OFF" class="w-full input-dark text-right text-xs">
+                            <select data-pv="$(P)$(M).FOFF" class="w-full input-dark text-xs"
+                                onchange="app.write(this.getAttribute('data-pv'), this.value)">
+                                <option value="0">Variable</option>
+                                <option value="1">Frozen</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resolution -->
+            <!-- Resolution -->
+            <div class="card card-responsive">
+                <div class="card-header">
+                    <span class="card-title text-sm">Resolution</span>
+                </div>
+                <div class="card-body grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Motor Res (MRES)</label>
+                        <input type="number" data-pv="$(P)$(M).MRES" class="w-full input-dark text-right text-xs">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Retries (RTRY)</label>
+                        <input type="number" data-pv="$(P)$(M).RTRY" class="w-full input-dark text-right text-xs">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Deadband (RDBD)</label>
+                        <input type="number" data-pv="$(P)$(M).RDBD" class="w-full input-dark text-right text-xs">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Enc Res (ERES)</label>
+                        <input type="number" data-pv="$(P)$(M).ERES" class="w-full input-dark text-right text-xs">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Rdbk Res (RRES)</label>
+                        <input type="number" data-pv="$(P)$(M).RRES" class="w-full input-dark text-right text-xs">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Use Encoder (UEIP)</label>
+                        <select data-pv="$(P)$(M).UEIP" class="w-full input-dark text-xs"
+                            onchange="app.write(this.getAttribute('data-pv'), this.value)">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="text-xs text-slate-400 block mb-1">Readback Dly (DLY)</label>
+                        <input type="number" data-pv="$(P)$(M).DLY" class="w-full input-dark text-right text-xs">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PID -->
+            <div class="card card-responsive">
+                <div class="card-header">
+                    <span class="card-title text-sm">PID Coefficients</span>
+                </div>
+                <div class="card-body grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="text-[10px] text-slate-400 block center">P (PCOF)</label>
+                        <input type="number" data-pv="$(P)$(M).PCOF" class="w-full input-dark text-center text-xs px-1">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-400 block center">I (ICOF)</label>
+                        <input type="number" data-pv="$(P)$(M).ICOF" class="w-full input-dark text-center text-xs px-1">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-400 block center">D (DCOF)</label>
+                        <input type="number" data-pv="$(P)$(M).DCOF" class="w-full input-dark text-center text-xs px-1">
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </main>
+
+    <script>
+        // --- Core Logic ---
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Dynamic WebSocket Host/Port
+        // Priority: 1. URL param (?ws_host=...) 2. Current Hostname (if served via HTTP) 3. Localhost fallback
+        const wsHost = urlParams.get('ws_host') || window.location.hostname || 'localhost';
+        const wsPort = urlParams.get('ws_port') || (window.location.port ? window.location.port : '8888');
+
+        const config = {
+            prefix: urlParams.get('P') || 'KOHZU:',
+            motor: urlParams.get('M') || 'm1',
+            wsUrl: `ws://${wsHost}:${wsPort}/ws`
+        };
+
+        // UI Update
+        document.getElementById('prefix-display').innerText = config.prefix + config.motor;
+        document.title = `Motor: ${config.prefix}${config.motor}`;
+
+        class EPICSController {
+            constructor() {
+                this.ws = null;
+                this.pvs = new Set();
+                this.precisions = {};
+                this.init();
+            }
+
+            init() {
+                this.ws = new WebSocket(config.wsUrl);
+                this.ws.onopen = () => this.onOpen();
+                this.ws.onmessage = (e) => this.onMessage(JSON.parse(e.data));
+                this.ws.onclose = () => {
+                    this.updateStatus(false);
+                    setTimeout(() => this.init(), 3000);
+                };
+                this.ws.onerror = (e) => console.error(e);
+            }
+
+            resolve(pv) {
+                return pv.replace('$(P)', config.prefix).replace('$(M)', config.motor);
+            }
+
+            onOpen() {
+                this.updateStatus(true);
+
+                // Scan DOM for PVs
+                document.querySelectorAll('[data-pv], [data-led-pv], [data-tooltip-pv]').forEach(el => {
+                    let pvAttr = 'data-pv';
+                    if (el.hasAttribute('data-led-pv')) pvAttr = 'data-led-pv';
+                    if (el.hasAttribute('data-tooltip-pv')) pvAttr = 'data-tooltip-pv';
+
+                    const raw = el.getAttribute(pvAttr);
+                    const resolved = this.resolve(raw);
+
+                    el.setAttribute('data-actual-pv', resolved);
+
+                    // Input handling
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                        el.onchange = (e) => this.write(raw, el.type === 'number' ? parseFloat(e.target.value) : e.target.value);
+                    }
+
+                    this.pvs.add(resolved);
+
+                    // Task 20.2: Auto-assign title & Custom Tooltip Logic
+                    el.setAttribute('title', resolved); // Built-in tooltip fallback
+
+                    let tooltipTimeout;
+                    let tooltipEl = null;
+
+                    el.addEventListener('mouseenter', () => {
+                        tooltipTimeout = setTimeout(() => {
+                            // Create Tooltip
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.className = 'pv-tooltip';
+                            tooltipEl.innerText = resolved;
+                            el.appendChild(tooltipEl);
+
+                            // Trigger reflow for transition
+                            void tooltipEl.offsetWidth;
+                            tooltipEl.classList.add('show');
+                        }, 1000);
+                    });
+
+                    el.addEventListener('mouseleave', () => {
+                        clearTimeout(tooltipTimeout);
+                        if (tooltipEl) {
+                            tooltipEl.remove();
+                            tooltipEl = null;
+                        }
+                    });
+                });
+
+                // Subscribe
+                this.ws.send(JSON.stringify({ type: 'subscribe', pvs: Array.from(this.pvs) }));
+
+            }
+
+            updateStatus(connected) {
+                const el = document.getElementById('conn-status');
+                if (connected) {
+                    el.className = "flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/50 text-green-300 text-xs font-semibold border border-green-800";
+                    el.innerHTML = '<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>Connected';
+                } else {
+                    el.className = "flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/50 text-red-300 text-xs font-semibold border border-red-800";
+                    el.innerHTML = '<div class="w-2 h-2 rounded-full bg-red-500"></div>Disconnected';
+                }
+            }
+
+            onMessage(data) {
+                if (data.type === 'update' && data.pv.endsWith('.PREC')) {
+                    const match = data.pv.match(/KOHZU:m(\d+)/);
+                    if (match) this.precisions[match[1]] = data.value;
+                }
+
+                if (data.type !== 'update') return;
+
+                // Update generic fields
+                document.querySelectorAll(`[data-actual-pv="${data.pv}"]`).forEach(el => {
+
+                    // Handle LEDs
+                    if (el.classList.contains('led')) {
+                        const targetVal = el.getAttribute('data-led-on') || "1";
+                        if (String(data.value) == targetVal) {
+                            el.classList.add(el.getAttribute('data-led-color') || 'on');
+                        } else {
+                            el.classList.remove('on', 'warn', 'error');
+                        }
+                        return;
+                    }
+
+                    // Handle Inputs/Text
+                    if (el.tagName === 'INPUT') {
+                        if (document.activeElement !== el) {
+                            let val = data.value;
+                            if (typeof val === 'number') {
+                                const match = data.pv.match(/KOHZU:m(\d+)/);
+                                const prec = (match && this.precisions[match[1]] !== undefined) ? this.precisions[match[1]] : 4;
+                                val = parseFloat(val.toFixed(prec));
+                            }
+                            el.value = val;
+                        }
+                    } else if (el.tagName === 'SELECT') {
+                        el.value = data.value;
+                    } else {
+                        // Skip if it is a tooltip-only element (Action Button)
+                        if (el.hasAttribute('data-tooltip-pv')) return;
+
+                        // Formatting
+                        let val = data.value;
+                        if (typeof val === 'number') {
+                            const match = data.pv.match(/KOHZU:m(\d+)/);
+                            const prec = (match && this.precisions[match[1]] !== undefined) ? this.precisions[match[1]] : 4;
+                            val = parseFloat(val.toFixed(prec));
+                        }
+                        el.innerText = val;
+                    }
+                });
+
+                // Special Logic: Moving State Overlay
+                if (data.pv.endsWith('.MOVN')) {
+                    const ov = document.getElementById('moving-overlay');
+                    const lbl = document.getElementById('status-movn');
+                    if (data.value == 1) {
+                        ov.classList.remove('opacity-0');
+                        lbl.innerText = "MOVING";
+                        lbl.classList.replace('bg-slate-700', 'bg-blue-600');
+                        lbl.classList.add('text-white');
+                    } else {
+                        ov.classList.add('opacity-0');
+                        lbl.innerText = "IDLE";
+                        lbl.classList.replace('bg-blue-600', 'bg-slate-700');
+                        lbl.classList.remove('text-white');
+                    }
+                }
+
+                // Special Logic: SET mode buttons
+                if (data.pv.endsWith('.SET')) {
+                    const btnUse = document.getElementById('btn-set-use');
+                    const btnSet = document.getElementById('btn-set-set');
+                    // Handle both numeric (0/1) and enum string ("Use"/"Set") values
+                    const val = data.value;
+                    const isUse = (val == 0 || val === 'Use');
+
+                    if (isUse) {
+                        btnUse.classList.add('bg-green-600', 'text-white');
+                        btnSet.classList.remove('bg-green-600', 'text-white');
+                    } else {
+                        btnUse.classList.remove('bg-green-600', 'text-white');
+                        btnSet.classList.add('bg-green-600', 'text-white');
+                    }
+                }
+
+                // Special Logic: SPMG buttons
+                if (data.pv.endsWith('.SPMG')) {
+                    const buttons = [
+                        document.getElementById('btn-spmg-0'),
+                        document.getElementById('btn-spmg-1'),
+                        document.getElementById('btn-spmg-2'),
+                        document.getElementById('btn-spmg-3')
+                    ];
+
+                    buttons.forEach((btn, idx) => {
+                        if (!btn) return;
+                        if (data.value == idx) {
+                            // Active State
+                            btn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+                            btn.classList.remove('text-slate-400', 'hover:bg-slate-700');
+                        } else {
+                            // Inactive State
+                            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                            btn.classList.add('text-slate-400', 'hover:bg-slate-700');
+                        }
+                    });
+                }
+            }
+
+            write(pv, value) {
+                this.ws.send(JSON.stringify({ type: 'write', pv: this.resolve(pv), value }));
+            }
+
+            writeInput(pv) {
+                const el = document.querySelector(`input[data-pv="${pv}"]`);
+                if (el) this.write(pv, parseFloat(el.value));
+            }
+        }
+
+        const app = new EPICSController();
+
+        // [Tailwind JIT Hack] Force include classes that are added dynamically via JS
+        // These are needed because the JIT compiler might miss them if they only appear in JS strings
+        // <div class="hidden bg-green-600 text-white border-green-600"></div>
+    </script>
+    <div class="hidden bg-green-600 text-white border-green-600"></div>
+</body>
+
+</html>

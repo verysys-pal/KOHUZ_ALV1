@@ -1,0 +1,39 @@
+{
+    "stageModel": "ZA05A-W101",
+    "axisType": "Vertical",
+    "specifications": {
+        "tableSize": "50mm × 50mm",
+        "guideMechanism": "Cross Roller Guide",
+        "leadMechanism": "1/2 Wedge, Ground Screw, Lead 0.5mm",
+        "motionRange": "±4mm",
+        "maxSpeed": "2.5mm/sec",
+        "loadCapacity": "39.2N (4kgf)",
+        "motor": "PK513PB (5 Phase Stepper)",
+        "sensor": "F-115(HOME, LIMIT)",
+        "weight": "0.42kg"
+    },
+    "driverSettings": {
+        "driverModel": "TITAN-A2",
+        "runCurrent": "0.35 A/phase",
+        "stopCurrent": "50~60% of RUN",
+        "cdSwitch_DIP3": "OFF (Current Down Enable)",
+        "ckSwitch_DIP2": "OFF (2-Pulse Mode: CW/CCW)"
+    },
+    "parameters": {
+        "EGU": "mm",
+        "UREV": 0.25,
+        "SREV": 1000,
+        "MRES": 0.00025,
+        "VELO": 1.5,
+        "JVEL": 1.5,
+        "JAR": 1.5,
+        "HVEL": 1.5,
+        "VMAX": 2.5,
+        "HLM": 3.9,
+        "LLM": -3.9,
+        "DHLM": 4.0,
+        "DLLM": -4.0,
+        "PREC": 5,
+        "UEIP": "No"
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "stageModel": "SA05A-R2B01",
+    "axisType": "Swivel",
+    "specifications": {
+        "tableSize": "50mm × 50mm",
+        "guideMechanism": "Cross Roller Guide",
+        "leadMechanism": "Ball Screw, Lead 1.0mm",
+        "angularRange": "±3.5°",
+        "maxSpeed": "9.6°/sec",
+        "loadCapacity": "29.4N (3kgf)",
+        "motor": "PK513PB (5 Phase Stepper)",
+        "sensor": "F-116 (HOME, LIMIT)",
+        "weight": "0.27kg"
+    },
+    "driverSettings": {
+        "driverModel": "TITAN-A2",
+        "runCurrent": "0.35 A/phase",
+        "stopCurrent": "50~60% of RUN",
+        "cdSwitch_DIP3": "OFF (Current Down Enable)",
+        "ckSwitch_DIP2": "OFF (2-Pulse Mode: CW/CCW)"
+    },
+    "parameters": {
+        "EGU": "deg",
+        "UREV": 0.637,
+        "SREV": 1000,
+        "MRES": 0.000637,
+        "VELO": 5.0,
+        "JVEL": 5.0,
+        "JAR": 5.0,
+        "HVEL": 5.0,
+        "VMAX": 9.6,
+        "HLM": 3.4,
+        "LLM": -3.4,
+        "DHLM": 3.5,
+        "DLLM": -3.5,
+        "PREC": 6,
+        "UEIP": "No"
+    }
+}
