@@ -14,7 +14,6 @@
 # iocBoot generated files
 /iocBoot/*ioc*/cdCommands
 /iocBoot/*ioc*/dllPath.bat
-/iocBoot/*ioc*/envPaths
 /iocBoot/*ioc*/relPaths.sh
 
 # Build directories

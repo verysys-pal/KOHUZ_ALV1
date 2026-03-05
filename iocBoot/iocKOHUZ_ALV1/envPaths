@@ -1,0 +1,7 @@
+epicsEnvSet("IOC","iocKOHUZ_ALV1")
+epicsEnvSet("TOP","/usr/local/epics/EPICS_R7.0/siteApp/KOHUZ_ALV1")
+epicsEnvSet("SUPPORT","/usr/local/epics/EPICS_R7.0/modules/synApps/support")
+epicsEnvSet("ASYN","/usr/local/epics/EPICS_R7.0/modules/synApps/support/asyn-R4-44-2")
+epicsEnvSet("MOTOR","/usr/local/epics/EPICS_R7.0/modules/synApps/support/motor-R7-3-1")
+epicsEnvSet("MOTOR_KOHZU","/usr/local/epics/EPICS_R7.0/modules/synApps/support/motor-R7-3-1/modules/motorKohzu")
+epicsEnvSet("EPICS_BASE","/usr/local/epics/EPICS_R7.0/base")
