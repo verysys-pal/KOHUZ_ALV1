@@ -11,6 +11,9 @@
 # Local configuration files
 /configure/*.local
 
+# local session files
+/kohzuApp/opi/sessions/*
+
 # iocBoot generated files
 /iocBoot/*ioc*/cdCommands
 /iocBoot/*ioc*/dllPath.bat
