@@ -12,7 +12,7 @@
 /configure/*.local
 
 # local session files
-/kohzuApp/opi/sessions/*
+/kohzuApp/opi/sessions/
 
 # iocBoot generated files
 /iocBoot/*ioc*/cdCommands
